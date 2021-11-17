@@ -1,0 +1,21 @@
+<resources>
+    <string name="app_name">ethExplore</string>
+    <string name="none">Null</string>
+    <string name="Eth">ETH:USDT</string>
+    <string name="Btc">ETH:BTC</string>
+    <string name="Usd">USDT</string>
+    <string name="space">:</string>
+    <string name="currentEthNumber">Number of Ether issued</string>
+    <string name="block_Number">Total Block </string>
+    <string name="node_Number">Number of Nodes </string>
+    <string name="last_Update">Last data update time</string>
+    <string name="searchView_hint">Address/TXn Hash/Block…</string>
+    <string name="search">search</string>
+    <string name="searchHint">Address,Block Number,Transactions</string>
+    <string name="eth_supply">Eth Supply</string>
+    <string name="eth2staking">Eth2 Staking</string>
+    <string name="burntfees">Burnt Fees</string>
+    <string name="ethereum_nodes_size">Ethereum Nodes Size</string>
+    <string name="chain_size">Chain Size</string>
+    <string name="total_nodes_count">Total Nodes Count</string>
+</resources>
