@@ -36,15 +36,6 @@ public class proxy_transactionsInfoAdapter extends RecyclerView.Adapter<proxy_tr
         switch (position){
             case 0:  holder.name.setText("hash");
                 holder.value.setText(bean.getHash());
-                holder.value.setTextColor(R.color.textLink);
-                holder.value.setOnClickListener(v -> {
-                    TransactionInfoFragment fragment = new TransactionInfoFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("data",holder.value.getText().toString());
-                    fragment.setArguments(bundle);
-                    MainActivity activity = (MainActivity)holder.value.getContext();
-                    activity.addFragment(fragment);
-                });
                 break;
             case 1:  holder.name.setText("gas");
                 holder.value.setText(TextUtils.to10(bean.getGas()));

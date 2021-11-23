@@ -9,12 +9,14 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.rainbowguo.ethexplore.MainActivity;
 import com.rainbowguo.ethexplore.R;
 import com.rainbowguo.ethexplore.Utils.TextUtils;
+import com.rainbowguo.ethexplore.Utils.myAnimation;
 import com.rainbowguo.ethexplore.adapter.InternalTransactionInfoAdapter;
 import com.rainbowguo.ethexplore.adapter.TransactionsInfoAdapter;
 import com.rainbowguo.ethexplore.adapter.proxy_transactionsInfoAdapter;
@@ -42,16 +44,28 @@ public class TransactionInfoFragment extends Fragment {
         assert getArguments() != null;
         data =  getArguments().getSerializable("data");
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-
+        viewMode = new ViewModelProvider(this).get(transactionInfoMode.class);
         observeData();
         initData();
 
     }
     @SuppressLint("ResourceAsColor")
     private  void observeData(){
-        viewMode = new ViewModelProvider(this).get(transactionInfoMode.class);
+        viewMode.getRequestState().observe(this, aBoolean -> {
+            if (aBoolean){
+                binding.ProgressView.setVisibility(View.GONE);
+                binding.scrollView.setVisibility(View.VISIBLE);
+                myAnimation.SmallToBig(binding.scrollView);
+            }else {
+                binding.scrollView.setVisibility(View.GONE);
+                binding.ProgressView.setVisibility(View.GONE);
+                binding.failedContent.setVisibility(View.VISIBLE);
+            }
 
+
+        });
         viewMode.getFromAddress().observe(this, s -> {
+            myAnimation.SmallToBig(binding.scrollView);
             binding.From.setText(s);
             binding.From.setTextColor(R.color.textLink);
             binding.From.setOnClickListener(v->{
@@ -88,27 +102,29 @@ public class TransactionInfoFragment extends Fragment {
             String value = TextUtils.to10(s.getValue());
             if(! value.equals("0"))
                 value = TextUtils.formatEther(value,null);
-            viewMode.getValue().setValue("Value: "  + value);
-            binding.ProgressView.setVisibility(View.GONE);
+            else
+                value = "0 Ether";
+            viewMode.getValue().setValue(value);
+
         });
     }
     private void initData(){
         if(data instanceof transactionsBean.ResultDTO){
+            viewMode.getRequestState().setValue(true);
             transactionsBean.ResultDTO bean = (transactionsBean.ResultDTO )data;
             binding.recyclerView.setAdapter(new TransactionsInfoAdapter(bean));
             viewMode.getFromAddress().setValue(bean.getFrom());
             viewMode.getToAddress().setValue(bean.getTo());
             String value = TextUtils.formatEther(bean.getValue(),null);
-            viewMode.getValue().setValue("Value: "  + value);
-            binding.ProgressView.setVisibility(View.GONE);
+            viewMode.getValue().setValue(value);
         }else if (data instanceof internalTransactionsBean.ResultDTO){
+            viewMode.getRequestState().setValue(true);
             internalTransactionsBean.ResultDTO bean = (internalTransactionsBean.ResultDTO)data;
             binding.recyclerView.setAdapter(new InternalTransactionInfoAdapter(bean));
             viewMode.getFromAddress().setValue(bean.getFrom());
             viewMode.getToAddress().setValue(bean.getTo());
             String value = TextUtils.formatEther(bean.getValue(),null);
-            viewMode.getValue().setValue("Value: "  + value);
-            binding.ProgressView.setVisibility(View.GONE);
+            viewMode.getValue().setValue(value);
         }else if(data instanceof String){
             viewMode.requestProsy_TransactionsInfo((String)data);
         }

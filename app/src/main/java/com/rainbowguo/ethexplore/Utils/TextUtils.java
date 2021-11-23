@@ -23,7 +23,7 @@ public class TextUtils {
         return "0x" + new BigInteger(value).toString(16);
     }
     public static String to10(String value){
-        if (value != null){
+        if (value != null && !value.equals("Max rate limit reached")){
             value = value.replaceFirst("0x","");
             return new BigInteger(value,16).toString();
         }else

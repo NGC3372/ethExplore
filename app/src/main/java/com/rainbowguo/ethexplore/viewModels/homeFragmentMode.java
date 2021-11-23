@@ -2,12 +2,14 @@ package com.rainbowguo.ethexplore.viewModels;
 
 import android.annotation.SuppressLint;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
 import com.rainbowguo.ethexplore.Utils.TextUtils;
+import com.rainbowguo.ethexplore.Utils.mToast;
 import com.rainbowguo.ethexplore.beans.EthPriceBean;
 import com.rainbowguo.ethexplore.beans.TotalBlockBean;
 import com.rainbowguo.ethexplore.beans.TotalEthBean;
@@ -24,8 +26,6 @@ import retrofit2.Response;
 
 public class homeFragmentMode extends ViewModel {
     private static final String TAG = "mainActivity_viewModel";
-
-    private final MutableLiveData<Boolean> requestFailed = new MutableLiveData<>();
 
     private final MutableLiveData<String> priceOfEthToBTC = new MutableLiveData<>();
     private final MutableLiveData<String> priceOfEthToUSDT = new MutableLiveData<>();
@@ -95,15 +95,20 @@ public class homeFragmentMode extends ViewModel {
         mServer.getTotalNodes(new Callback<TotalNodesBean>() {
             @Override
             public void onResponse(@NonNull Call<TotalNodesBean> call, @NonNull Response<TotalNodesBean> response) {
+
                 assert response.body() != null;
                 TotalNodesBean bean = response.body();
+                Log.i(TAG, "onResponse: " + bean.getStatus());
+                Log.i(TAG, "onResponse: "+ bean.getResult());
+                Log.i(TAG, "onResponse: " + bean.getMessage());
+                System.out.println("1231231");
                 NumberOfTotalNode.setValue(bean.getResult().getTotalNodeCount());
+
             }
 
             @Override
             public void onFailure(@NonNull Call<TotalNodesBean> call, @NonNull Throwable t) {
-                Log.i(TAG, "onFailure: getTotalNodes" );
-
+                mToast.showToastRequestFail();
             }
         });
     }
@@ -121,8 +126,7 @@ public class homeFragmentMode extends ViewModel {
 
             @Override
             public void onFailure(@NonNull Call<TotalBlockBean> call, @NonNull Throwable t) {
-                Log.i(TAG, "onFailure: getTotalBlockNumber" );
-                requestFailed.setValue(true);
+                mToast.showToastRequestFail();
             }
         });
 
@@ -140,8 +144,7 @@ public class homeFragmentMode extends ViewModel {
 
             @Override
             public void onFailure(@NonNull Call<TotalEthBean> call, @NonNull Throwable t) {
-                Log.i(TAG, "onFailure: getTotalNodes" );
-                requestFailed.setValue(true);
+                mToast.showToastRequestFail();
             }
         });
     }
@@ -157,8 +160,7 @@ public class homeFragmentMode extends ViewModel {
 
             @Override
             public void onFailure(@NonNull Call<EthPriceBean> call, @NonNull Throwable t) {
-                Log.i(TAG, "onFailure: getEthPrice" );
-                requestFailed.setValue(true);
+                mToast.showToastRequestFail();
             }
         });
     }
@@ -176,7 +178,7 @@ public class homeFragmentMode extends ViewModel {
 
             @Override
             public void onFailure(Call<chainSizeBean> call, Throwable t) {
-                Log.i(TAG, "onFailure: getEthSize" );
+                mToast.showToastRequestFail();
             }
         });
     }
@@ -186,6 +188,7 @@ public class homeFragmentMode extends ViewModel {
         String formatter =
                 SimpleDateFormat.getDateTimeInstance().format(date);
         requestTime.setValue(formatter);
+
     }
 
 }

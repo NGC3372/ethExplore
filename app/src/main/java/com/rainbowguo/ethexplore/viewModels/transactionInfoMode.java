@@ -15,6 +15,7 @@ public class transactionInfoMode extends ViewModel {
     private final MutableLiveData<String> FromAddress = new MutableLiveData<>();
     private final MutableLiveData<String> ToAddress = new MutableLiveData<>();
     private final MutableLiveData<String> Value = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> requestState = new MutableLiveData<>();
     private final MutableLiveData<proxy_transactionsInfoBean.ResultDTO> Bean = new MutableLiveData<>();
 
     public MutableLiveData<String> getFromAddress() {
@@ -29,6 +30,10 @@ public class transactionInfoMode extends ViewModel {
         return Value;
     }
 
+    public MutableLiveData<Boolean> getRequestState() {
+        return requestState;
+    }
+
     public MutableLiveData<proxy_transactionsInfoBean.ResultDTO> getBean() {
         return Bean;
     }
@@ -37,14 +42,19 @@ public class transactionInfoMode extends ViewModel {
         EtherScanServer.getInstance().getProxyTransactionsInfo(TxHash, new Callback<proxy_transactionsInfoBean>() {
             @Override
             public void onResponse(Call<proxy_transactionsInfoBean> call, Response<proxy_transactionsInfoBean> response) {
-                assert response.body() != null;
-                proxy_transactionsInfoBean.ResultDTO bean = response.body().getResult();
-                Bean.setValue(bean);
+                if (response.body() == null || response.body().getResult() == null)
+                    requestState.setValue(false);
+                else {
+                    requestState.setValue(true);
+                    proxy_transactionsInfoBean.ResultDTO bean = response.body().getResult();
+                    Bean.setValue(bean);
+                }
+
             }
 
             @Override
             public void onFailure(Call<proxy_transactionsInfoBean> call, Throwable t) {
-
+                requestState.setValue(false);
             }
         });
     }

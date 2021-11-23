@@ -15,6 +15,7 @@ import com.rainbowguo.ethexplore.R;
 import com.rainbowguo.ethexplore.Utils.TextUtils;
 import com.rainbowguo.ethexplore.beans.transactionsBean;
 import com.rainbowguo.ethexplore.fragments.TransactionInfoFragment;
+import com.rainbowguo.ethexplore.fragments.blockFragment;
 
 public class TransactionsInfoAdapter extends RecyclerView.Adapter<TransactionsInfoAdapter.mViewHolder> {
     private final transactionsBean.ResultDTO bean;
@@ -36,15 +37,6 @@ public class TransactionsInfoAdapter extends RecyclerView.Adapter<TransactionsIn
             case 0: {
                 holder.name.setText("hash");//
                 holder.value.setText(bean.getHash());
-                holder.value.setTextColor(R.color.textLink);
-                holder.value.setOnClickListener(v->{
-                    TransactionInfoFragment fragment = new TransactionInfoFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("data",holder.value.getText().toString());
-                    fragment.setArguments(bundle);
-                    MainActivity activity = (MainActivity)holder.value.getContext();
-                    activity.addFragment(fragment);
-                });
                 break;
             }
             case 1: {
@@ -55,6 +47,15 @@ public class TransactionsInfoAdapter extends RecyclerView.Adapter<TransactionsIn
             case 2: {
                 holder.name.setText("blockNumber");//
                 holder.value.setText(bean.getBlockNumber());
+                holder.value.setTextColor(R.color.textLink);
+                holder.value.setOnClickListener(v -> {
+                    blockFragment fragment = new blockFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("blockNumber",holder.value.getText().toString());
+                    fragment.setArguments(bundle);
+                    MainActivity activity = (MainActivity)holder.value.getContext();
+                    activity.addFragment(fragment);
+                });
                 break;
             }
             case 3: {
@@ -64,6 +65,7 @@ public class TransactionsInfoAdapter extends RecyclerView.Adapter<TransactionsIn
             }
             case 4: {
                 holder.name.setText("blockHash");
+                holder.value.setText(bean.getBlockHash());
                 break;
             }
             case 5: {

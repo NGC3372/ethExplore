@@ -4,7 +4,6 @@ import android.annotation.SuppressLint;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.lifecycle.LifecycleOwner;
 import androidx.lifecycle.MutableLiveData;
 import androidx.lifecycle.ViewModel;
 
@@ -34,20 +33,13 @@ public class addressFragmentMode extends ViewModel {
     private String byteCode;
     public final MutableLiveData<String> addressType = new MutableLiveData<>();
     public final MutableLiveData<String> addressBalance = new MutableLiveData<>();
+    private final MutableLiveData<Boolean> requestState = new MutableLiveData<>();
     public  String addressByteCode ;
-
     private final ArrayList<transactionsBean.ResultDTO> transactionList = new ArrayList<>();
     private final ArrayList<internalTransactionsBean.ResultDTO> internalList = new ArrayList<>();
     private final HashMap<String,String> contractData = new HashMap<>();
-
     private final EtherScanServer mServer;
 
-
-
-
-
-    private viewpageAdapter adapter;
-    private LifecycleOwner owner;
 
 
     public MutableLiveData<String> getAddressType() {
@@ -58,6 +50,9 @@ public class addressFragmentMode extends ViewModel {
         return addressBalance;
     }
 
+    public MutableLiveData<Boolean> getRequestState() {
+        return requestState;
+    }
 
     public ArrayList<transactionsBean.ResultDTO> getTransactionList() {
         return transactionList;
@@ -95,7 +90,7 @@ public class addressFragmentMode extends ViewModel {
 
             @Override
             public void onFailure(Call<ContractByteCodeBean> call, Throwable t) {
-
+                requestState.setValue(false);
             }
         });
     }
@@ -104,8 +99,14 @@ public class addressFragmentMode extends ViewModel {
             @SuppressLint("NotifyDataSetChanged")
             @Override
             public void onResponse(Call<ContractCodeBean> call, Response<ContractCodeBean> response) {
-                String abi = response.body().getResult().get(0).getAbi();
-                String code = response.body().getResult().get(0).getSourceCode();
+                String abi ;
+                String code ;
+                abi = response.body().getResult().get(0).getAbi();
+                code = response.body().getResult().get(0).getSourceCode();
+                if (code.equals(""))
+                    code = "-";
+                if (abi.equals("Contract source code not verified"))
+                    abi = "-";
                 contractData.put("byteCode", byteCode);
                 contractData.put("abi", abi);
                 contractData.put("code",code);
@@ -114,7 +115,7 @@ public class addressFragmentMode extends ViewModel {
 
             @Override
             public void onFailure(Call<ContractCodeBean> call, Throwable t) {
-
+                requestState.setValue(false);
             }
         });
     }
@@ -125,21 +126,23 @@ public class addressFragmentMode extends ViewModel {
             public void onResponse(@NonNull Call<transactionsBean> call, @NonNull Response<transactionsBean> response) {
                 transactionsBean bean = response.body();
                 List<transactionsBean.ResultDTO> list = bean.getResult();
-                adapter.setTransactionsPageProgressBarGone();
                 if (list.size() == 0){
                     adapter.getTransactionsPage().setValue(-1);
-                    //transactionsPage.setValue(-1);
+                    adapter.setTransactionsPageProgressBarGone();
                 }else {
                     transactionList.addAll(list);
                     transactionAdapter.notifyDataSetChanged();
-                    if (list.size() < 10)
+                    if (list.size() < 10){
                         adapter.getTransactionsPage().setValue(-1);
+                        adapter.setTransactionsPageProgressBarGone();
+                    }
                 }
             }
 
             @Override
             public void onFailure(Call<transactionsBean> call, Throwable t) {
                 Log.i(TAG, "onFailure: getTransactions");
+                requestState.setValue(false);
             }
         });
     }
@@ -149,22 +152,24 @@ public class addressFragmentMode extends ViewModel {
             @Override
             public void onResponse(Call<internalTransactionsBean> call, Response<internalTransactionsBean> response) {
                 List<internalTransactionsBean.ResultDTO> list = response.body().getResult();
-                adapter.setInternalTransactionsPageProgressBarGone();
-                //Log.i(TAG, "onResponse: internallist" + list.size() + "  " + internalTransactionsPage.getValue());
+                Log.i(TAG, "onResponse: internal " + list.size() + page);
                 if (list.size() == 0){
                     adapter.getInternalTransactionsPage().setValue(-1);
+                    adapter.setInternalTransactionsPageProgressBarGone();
                 }else {
                     internalList.addAll(list);
                     internalTransactionAdapter.notifyDataSetChanged();
-                    if (list.size()< 10)
+                    if (list.size() < 10){
+                        Log.i(TAG, "onResponse: gone");
+                        adapter.setInternalTransactionsPageProgressBarGone();
                         adapter.getInternalTransactionsPage().setValue(-1);
+                    }
                 }
-
             }
 
             @Override
             public void onFailure(Call<internalTransactionsBean> call, Throwable t) {
-
+                requestState.setValue(false);
             }
         });
     }
@@ -179,8 +184,7 @@ public class addressFragmentMode extends ViewModel {
 
             @Override
             public void onFailure(Call<balanceBean> call, Throwable t) {
-
-
+                requestState.setValue(false);
             }
         });
 

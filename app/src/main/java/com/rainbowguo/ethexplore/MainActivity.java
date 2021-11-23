@@ -7,6 +7,9 @@ import androidx.fragment.app.FragmentManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
+import android.view.MenuItem;
+
+import com.rainbowguo.ethexplore.Utils.mToast;
 import com.rainbowguo.ethexplore.databinding.ActivityMainBinding;
 import com.rainbowguo.ethexplore.fragments.*;
 
@@ -23,9 +26,11 @@ public class MainActivity extends AppCompatActivity {
         bind = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(bind.getRoot());
         setSupportActionBar(bind.toolbar);
+
         fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().add(R.id.fragmentBox,new HomeFragment()).commit();
         bind.searchButton.setOnClickListener(v->new mDialogFragment().show(fragmentManager,null));
+        mToast.create(this);
     }
 
     @Override
@@ -33,9 +38,14 @@ public class MainActivity extends AppCompatActivity {
         getMenuInflater().inflate(R.menu.activity_main_appbar_item,menu);
         //Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
         //Objects.requireNonNull(getSupportActionBar()).setDisplayShowTitleEnabled(false);
-
         Log.i(TAG, "content: "+ getBaseContext());
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+
+        return super.onOptionsItemSelected(item);
     }
 
     public void addFragment(Fragment fragment){
@@ -44,4 +54,9 @@ public class MainActivity extends AppCompatActivity {
     }
 
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mToast.clear();
+    }
 }

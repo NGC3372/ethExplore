@@ -1,83 +1,188 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="vertical"
     android:background="@color/background">
-    <com.google.android.material.card.MaterialCardView
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="10dp"
-        android:background="@color/background">
-        <LinearLayout
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:visibility="gone"
+        android:id="@+id/content">
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_margin="10dp"
-            android:orientation="vertical">
+            app:cardBackgroundColor="@color/views"
+            android:id="@+id/cardView">
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="10dp"
+                android:orientation="vertical">
+                <androidx.appcompat.widget.LinearLayoutCompat
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginTop="10dp"
+                    android:layout_gravity="center_horizontal">
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:src="@drawable/block"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textColor="@color/textCommon"
+                        android:textSize="25sp"
+                        android:layout_gravity="center_vertical"
+                        android:text="@string/block_height"
+                        android:textStyle="bold"
+                        android:layout_marginStart="5dp"/>
+                </androidx.appcompat.widget.LinearLayoutCompat>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:textColor="@color/title"
+                    android:textSize="25sp"
+                    android:text=""
+                    android:textStyle="bold"
+                    android:layout_gravity="center_horizontal"
+                    android:layout_marginTop="10dp"
+                    android:id="@+id/blockNumber"/>
+
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+
+                    android:layout_marginTop="15dp">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/chuizi"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:textStyle="bold"
+                        android:id="@+id/textMiner"
+                        android:layout_marginStart="5dp"
+                        android:text="@string/miner"/>
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/miner"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="20dp"
+                    android:text=""
+                    android:textIsSelectable="true"
+                    android:textSize="15sp" />
+                <LinearLayout
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginVertical="5dp">
+                    <ImageView
+                        android:layout_width="20dp"
+                        android:layout_height="20dp"
+                        android:src="@drawable/date" />
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:layout_marginStart="5dp"
+                        android:text="@string/date"
+                        android:layout_gravity="center_vertical"
+                        android:textStyle="bold"/>
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:textSize="15sp"
+                        android:id="@+id/date"
+                        android:layout_marginStart="15dp"
+                        android:text=""/>
+                </LinearLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_margin="10dp"
+            android:layout_marginStart="5dp">
+            <ImageView
+                android:layout_width="20dp"
+                android:layout_height="20dp"
+                android:src="@drawable/jiaoyi"/>
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:textColor="@color/textEmphasize"
-                android:textSize="25sp"
-                android:text="Block Height:"
+                android:text="@string/transaction_hash"
+                android:textSize="15sp"
                 android:textStyle="bold"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp" />
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textColor="@color/textEmphasize"
-                android:textSize="25sp"
-                android:text=""
-                android:textStyle="bold"
-                android:layout_gravity="center_horizontal"
-                android:layout_marginTop="10dp"
-                android:id="@+id/blockNumber"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:text="date:"
-                android:textStyle="bold"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:id="@+id/date"
-                android:layout_marginStart="10dp"
-                android:text=""/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:textStyle="bold"
-                android:id="@+id/textMiner"
-                android:text="miner:"/>
-            <TextView
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:textSize="15sp"
-                android:id="@+id/miner"
-                android:layout_marginStart="10dp"
-                android:textIsSelectable="true"
-                android:text=""/>
+                android:layout_marginStart="5dp"
+                android:textColor="@color/textCommon"/>
         </LinearLayout>
-    </com.google.android.material.card.MaterialCardView>
-    <TextView
+        <androidx.recyclerview.widget.RecyclerView
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:background="@color/backgroundLight"
+            android:layout_weight="1"
+            android:id="@+id/recyclerView"
+            android:scrollbarThumbVertical="@color/title"
+            android:scrollbars="vertical"
+            android:scrollbarSize="5dp"
+            android:layout_marginHorizontal="5dp"/>
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:visibility="gone"
+            android:background="@color/backgroundLight"
+            android:id="@+id/can_not_find">
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:layout_centerInParent="true"
+                android:id="@+id/wind"
+                android:src="@drawable/wind"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textSize="13sp"
+                android:layout_below="@id/wind"
+                android:layout_centerHorizontal="true"
+                android:layout_marginTop="5dp"
+                android:textColor="@color/textGrey"
+                android:text="@string/can_not_find"/>
+        </RelativeLayout>
+    </LinearLayout>
+    <ProgressBar
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Transaction Hash:"
-        android:textSize="15sp"
-        android:textStyle="bold"
-        android:layout_margin="10dp"
-        android:textColor="@color/textEmphasize"/>
-    <androidx.recyclerview.widget.RecyclerView
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1"
-        android:id="@+id/recyclerView"
-        android:scrollbarThumbVertical="@color/title"
-        android:scrollbars="vertical"
-        android:scrollbarSize="5dp"
-        android:layout_marginHorizontal="5dp"/>
-</LinearLayout>
+        android:layout_gravity="center"
+        android:id="@+id/ProgressView"/>
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:orientation="vertical"
+        android:gravity="center_horizontal"
+        android:id="@+id/failedContent"
+        android:visibility="gone">
+            <ImageView
+                android:layout_width="70dp"
+                android:layout_height="70dp"
+                android:src="@drawable/shibai"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="@color/textGrey"
+                android:textSize="18sp"
+                android:layout_marginTop="5dp"
+                android:text="@string/request_failed"/>
+    </LinearLayout>
+
+</FrameLayout>

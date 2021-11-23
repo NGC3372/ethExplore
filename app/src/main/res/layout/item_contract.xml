@@ -7,11 +7,30 @@
     android:divider="@drawable/divider"
     android:id="@+id/rootView"
     android:dividerPadding="15dp">
-
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:gravity="center_vertical">
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/textCommon"
+            android:textStyle="bold"
+            android:id="@+id/name"
+            android:textSize="15sp"
+            android:layout_marginStart="5dp"/>
+        <ImageView
+            android:layout_width="20dp"
+            android:layout_height="20dp"
+            android:src="@drawable/fuzhi"
+            android:layout_marginStart="5dp"
+            android:id="@+id/copy"/>
+    </LinearLayout>
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="adsfsadfsa"
         android:textSize="13sp"
+        android:layout_marginHorizontal="10dp"
         android:id="@+id/contract"/>
 </LinearLayout>

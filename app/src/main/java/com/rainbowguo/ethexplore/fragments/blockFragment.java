@@ -9,11 +9,13 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import com.rainbowguo.ethexplore.MainActivity;
 import com.rainbowguo.ethexplore.R;
+import com.rainbowguo.ethexplore.Utils.myAnimation;
 import com.rainbowguo.ethexplore.adapter.BlockInfoAdapter;
 import com.rainbowguo.ethexplore.databinding.FragmentBlockBinding;
 import com.rainbowguo.ethexplore.viewModels.blockFragmentMode;
@@ -45,7 +47,24 @@ public class blockFragment extends Fragment {
             binding.miner.setText(s);
         });
         viewMode.getTransactionsSize().observe(this, integer -> {
-            Objects.requireNonNull(binding.recyclerView.getAdapter()).notifyDataSetChanged();
+            if (integer == 0){
+                binding.recyclerView.setVisibility(View.GONE);
+                binding.canNotFind.setVisibility(View.VISIBLE);
+            }else
+                Objects.requireNonNull(binding.recyclerView.getAdapter()).notifyDataSetChanged();
+        });
+        viewMode.getRequestState().observe(this, aBoolean -> {
+            if (aBoolean){
+                binding.ProgressView.setVisibility(View.GONE);
+                myAnimation.SmallToBig(binding.content);
+                binding.content.setVisibility(View.VISIBLE);
+
+            }else {
+                binding.ProgressView.setVisibility(View.GONE);
+                binding.content.setVisibility(View.GONE);
+                binding.failedContent.setVisibility(View.VISIBLE);
+            }
+
         });
         binding.recyclerView.setLayoutManager(new LinearLayoutManager(getContext()));
         binding.recyclerView.setAdapter(new BlockInfoAdapter(viewMode.getTransactionsList()));

@@ -54,10 +54,12 @@ public class HomeFragment extends Fragment {
     private void requestData(){
         viewMode.clearData();
         viewMode.setRequestTime();
+
         viewMode.getEthPrice();
         viewMode.getTotalEthNumber();
         viewMode.getTotalBlockNumber();
         viewMode.getEthSize();
         viewMode.getTotalNodes();
+
     }
 }

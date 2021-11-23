@@ -1,5 +1,7 @@
 package com.rainbowguo.ethexplore.adapter;
 
+import android.annotation.SuppressLint;
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -8,9 +10,11 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.rainbowguo.ethexplore.MainActivity;
 import com.rainbowguo.ethexplore.R;
 import com.rainbowguo.ethexplore.Utils.TextUtils;
 import com.rainbowguo.ethexplore.beans.internalTransactionsBean;
+import com.rainbowguo.ethexplore.fragments.blockFragment;
 
 public class InternalTransactionInfoAdapter extends RecyclerView.Adapter<InternalTransactionInfoAdapter.mViewHolder> {
     private final internalTransactionsBean.ResultDTO bean;
@@ -25,6 +29,7 @@ public class InternalTransactionInfoAdapter extends RecyclerView.Adapter<Interna
         return new mViewHolder(view);
     }
 
+    @SuppressLint("ResourceAsColor")
     @Override
     public void onBindViewHolder(@NonNull mViewHolder holder, int position) {
         switch (position){
@@ -34,7 +39,7 @@ public class InternalTransactionInfoAdapter extends RecyclerView.Adapter<Interna
                 break;
             }
             case 1: {
-                holder.name.setText("timestamp");//
+                holder.name.setText("date");//
                 holder.value.setText(TextUtils.timeStampFormat(bean.getTimeStamp()));
                 break;
             }
@@ -42,6 +47,15 @@ public class InternalTransactionInfoAdapter extends RecyclerView.Adapter<Interna
             case 2: {
                 holder.name.setText("blockNumber");//
                 holder.value.setText(bean.getBlockNumber());
+                holder.value.setTextColor(R.color.textLink);
+                holder.value.setOnClickListener(v -> {
+                    blockFragment fragment = new blockFragment();
+                    Bundle bundle = new Bundle();
+                    bundle.putString("blockNumber",holder.value.getText().toString());
+                    fragment.setArguments(bundle);
+                    MainActivity activity = (MainActivity)holder.value.getContext();
+                    activity.addFragment(fragment);
+                });
                 break;
             }
 

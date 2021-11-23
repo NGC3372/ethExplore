@@ -3,12 +3,15 @@ package com.rainbowguo.ethexplore.adapter;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.rainbowguo.ethexplore.R;
+import com.rainbowguo.ethexplore.Utils.copyUtils;
+import com.rainbowguo.ethexplore.Utils.mToast;
 
 import java.util.HashMap;
 
@@ -30,12 +33,18 @@ public class ContractInfoAdapter extends RecyclerView.Adapter<ContractInfoAdapte
     @Override
     public void onBindViewHolder(@NonNull mViewHolder holder, int position) {
         String data = "";
+        String name = "";
         switch (position){
-            case 0: data += contractData.get("abi");break;
-            case 1: data += contractData.get("code");break;
-            case 2: data += contractData.get("byteCode");break;
+            case 0: data += contractData.get("abi");name= "ABI";break;
+            case 1: data += contractData.get("code");name = "Code";break;
+            case 2: data += contractData.get("byteCode");name = "ByteCode";break;
         }
-        holder.textView.setText(data);
+        holder.value.setText(data);
+        holder.name.setText(name);
+        holder.copyImg.setOnClickListener(v-> {
+            copyUtils.copy(holder.value.getText().toString(),holder.name.getContext());
+            mToast.showCopy();
+        });
     }
 
     @Override
@@ -44,11 +53,15 @@ public class ContractInfoAdapter extends RecyclerView.Adapter<ContractInfoAdapte
     }
 
     public static class mViewHolder extends RecyclerView.ViewHolder{
-        public TextView textView;
+        public TextView value;
+        public TextView name;
+        public ImageView copyImg;
 
         public mViewHolder(@NonNull View itemView) {
             super(itemView);
-            textView = itemView.findViewById(R.id.contract);
+            value = itemView.findViewById(R.id.contract);
+            name = itemView.findViewById(R.id.name);
+            copyImg = itemView.findViewById(R.id.copy);
         }
     }
 }

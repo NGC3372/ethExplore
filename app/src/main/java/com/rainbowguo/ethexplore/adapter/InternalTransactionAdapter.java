@@ -5,6 +5,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
@@ -49,10 +50,12 @@ public class InternalTransactionAdapter extends RecyclerView.Adapter<InternalTra
         if (fromAddress.equals(userAddress)){
             holder.address.setText(toAddress);
             holder.role.setText("Send To");
+            holder.typeImg.setImageResource(R.drawable.get);
         }
         else {
             holder.address.setText(fromAddress);
             holder.role.setText("Get from");
+            holder.typeImg.setImageResource(R.drawable.send);
         }
         holder.time.setText(TextUtils.timeStampFormat(time));
         holder.value.setText(TextUtils.formatEther(value,null));
@@ -76,6 +79,7 @@ public class InternalTransactionAdapter extends RecyclerView.Adapter<InternalTra
     public static class mViewHolder extends RecyclerView.ViewHolder{
         public TextView role,address,time,value;
         public LinearLayout rootView;
+        public ImageView typeImg;
 
         public mViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -84,6 +88,7 @@ public class InternalTransactionAdapter extends RecyclerView.Adapter<InternalTra
             time = itemView.findViewById(R.id.time);
             value = itemView.findViewById(R.id.value);
             rootView = itemView.findViewById(R.id.rootView);
+            typeImg = itemView.findViewById(R.id.type);
         }
     }
 }

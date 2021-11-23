@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">ethExplore</string>
+    <string name="app_name">Ethereum Explore</string>
     <string name="none">Null</string>
     <string name="Eth">ETH:USDT</string>
     <string name="Btc">ETH:BTC</string>
@@ -11,11 +11,20 @@
     <string name="last_Update">Last data update time</string>
     <string name="searchView_hint">Address/TXn Hash/Block…</string>
     <string name="search">search</string>
-    <string name="searchHint">Address,Block Number,Transactions</string>
+    <string name="searchHint">Address,Block Number and Transactions</string>
     <string name="eth_supply">Eth Supply</string>
     <string name="eth2staking">Eth2 Staking</string>
     <string name="burntfees">Burnt Fees</string>
     <string name="ethereum_nodes_size">Ethereum Nodes Size</string>
     <string name="chain_size">Chain Size</string>
     <string name="total_nodes_count">Total Nodes Count</string>
+    <string name="miner">Miner:</string>
+    <string name="request_failed">Ops! Request failed.</string>
+    <string name="block_height">Block Height</string>
+    <string name="can_not_find">Ops! This block transaction can\'t be queried.</string>
+    <string name="date">Date:</string>
+    <string name="transaction_hash">Transactions Hash</string>
+    <string name="from">From</string>
+    <string name="to">To</string>
+    <string name="value">Value:</string>
 </resources>

@@ -2,6 +2,7 @@ package com.rainbowguo.ethexplore.fragments;
 
 import android.annotation.SuppressLint;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -9,10 +10,14 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.lifecycle.Observer;
 import androidx.lifecycle.ViewModel;
 import androidx.lifecycle.ViewModelProvider;
 
 import com.google.android.material.tabs.TabLayoutMediator;
+import com.rainbowguo.ethexplore.R;
+import com.rainbowguo.ethexplore.Utils.mToast;
+import com.rainbowguo.ethexplore.Utils.myAnimation;
 import com.rainbowguo.ethexplore.adapter.ContractInfoAdapter;
 import com.rainbowguo.ethexplore.adapter.InternalTransactionAdapter;
 import com.rainbowguo.ethexplore.adapter.TransactionAdapter;
@@ -32,7 +37,7 @@ public class AddressFragment extends Fragment {
         bind = FragmentAddressBinding.inflate(inflater);
         assert getArguments() != null;
         address = getArguments().getString("address");
-        bind.address.setText(address);
+        bind.viewPager.setOffscreenPageLimit(1);
         return bind.getRoot();
     }
 
@@ -55,10 +60,20 @@ public class AddressFragment extends Fragment {
         InternalTransactionAdapter internalTransactionAdapter = new InternalTransactionAdapter(viewMode.getInternalList(),address);
         ContractInfoAdapter contractInfoAdapter = new ContractInfoAdapter(viewMode.getContractData());
 
-        viewMode.getAddressType().observe(this,s->{
-            bind.role.setText(s);
+        viewMode.getRequestState().observe(this,s->{
+            if (!s){
+                mToast.showToastRequestFail();
+            }
+        });
 
+        viewMode.getAddressType().observe(this,s->{
+            bind.content.setVisibility(View.VISIBLE);
+            bind.progressBar.setVisibility(View.GONE);
+            myAnimation.SmallToBig(bind.content);
+            bind.role.setText(s);
+            bind.address.setText(address);
             if (s.equals("Address")){
+                bind.roleImg.setImageResource(R.drawable.user);
                 adapter = new viewpageAdapter(transactionAdapter,internalTransactionAdapter);
                 bind.viewPager.setAdapter(adapter);
                 new TabLayoutMediator(bind.tabLayout, bind.viewPager, (tab, position) -> {
@@ -68,6 +83,7 @@ public class AddressFragment extends Fragment {
                         tab.setText("Internal Txns");
                 }).attach();
             }else if(s.equals("Contract")){
+                bind.roleImg.setImageResource(R.drawable.contract);
                 adapter = new viewpageAdapter(transactionAdapter,internalTransactionAdapter,contractInfoAdapter);
                 bind.viewPager.setAdapter(adapter);
                 new TabLayoutMediator(bind.tabLayout, bind.viewPager, (tab, position) -> {
@@ -80,11 +96,27 @@ public class AddressFragment extends Fragment {
                 }).attach();
                 viewMode.getContractData(contractInfoAdapter);
             }
-            adapter.getTransactionsPage().observe(AddressFragment.this, integer ->
-                    viewMode.getTransactionsData(integer.toString(),adapter, transactionAdapter));
+            adapter.getTransactionsPage().observe(AddressFragment.this, integer ->{
+                if (integer != -1)
+                    viewMode.getTransactionsData(integer.toString(),adapter, transactionAdapter);
+                else
+                    if (viewMode.getTransactionList().size() == 0){
+                        Log.i(TAG, "onViewCreated: transaction 000000");
+                        adapter.setTransactionsNullContent();
+                    }
+                }
+            );
 
-            adapter.getInternalTransactionsPage().observe(AddressFragment.this, integer ->
-                    viewMode.getInternalTransactionsData(integer.toString(),adapter, internalTransactionAdapter));
+            adapter.getInternalTransactionsPage().observe(AddressFragment.this, integer ->{
+                if (integer != -1)
+                    viewMode.getInternalTransactionsData(integer.toString(),adapter, internalTransactionAdapter);
+                else
+                    if (viewMode.getInternalList().size() == 0){
+                        Log.i(TAG, "onViewCreated: internaltransaction 000000");
+                        adapter.setInternalTransactionsNullContent();
+                    }
+                }
+            );
         });
 
         viewMode.requestAddressBytecode();
