@@ -1,134 +1,144 @@
-package com.rainbowguo.ethexplore.fragments;
-
-import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.fragment.app.Fragment;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.recyclerview.widget.LinearLayoutManager;
-
-import com.rainbowguo.ethexplore.MainActivity;
-import com.rainbowguo.ethexplore.R;
-import com.rainbowguo.ethexplore.Utils.TextUtils;
-import com.rainbowguo.ethexplore.Utils.myAnimation;
-import com.rainbowguo.ethexplore.adapter.InternalTransactionInfoAdapter;
-import com.rainbowguo.ethexplore.adapter.TransactionsInfoAdapter;
-import com.rainbowguo.ethexplore.adapter.proxy_transactionsInfoAdapter;
-import com.rainbowguo.ethexplore.beans.internalTransactionsBean;
-import com.rainbowguo.ethexplore.beans.transactionsBean;
-import com.rainbowguo.ethexplore.databinding.FragmentTransactionsBinding;
-import com.rainbowguo.ethexplore.viewModels.transactionInfoMode;
+package com.rainbowguo.ethexplore.fragments
 
 
-public class TransactionInfoFragment extends Fragment {
-    private FragmentTransactionsBinding binding;
-    private transactionInfoMode viewMode;
-    private Object data;
-    @Nullable
-    @Override
-    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        binding = FragmentTransactionsBinding.inflate(inflater);
-        return binding.getRoot();
+import com.rainbowguo.ethexplore.viewModels.transactionInfoMode
+import android.view.LayoutInflater
+import android.view.ViewGroup
+import android.os.Bundle
+import android.annotation.SuppressLint
+import android.util.Log
+import android.view.View
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.rainbowguo.ethexplore.Utils.myAnimation
+import com.rainbowguo.ethexplore.R
+import com.rainbowguo.ethexplore.MainActivity
+import com.rainbowguo.ethexplore.NewMainActivity
+import com.rainbowguo.ethexplore.Utils.TextUtils
+import com.rainbowguo.ethexplore.fragments.AddressFragment
+
+import com.rainbowguo.ethexplore.beans.transactionsBean
+import com.rainbowguo.ethexplore.adapter.TransactionsInfoAdapter
+import com.rainbowguo.ethexplore.beans.internalTransactionsBean
+import com.rainbowguo.ethexplore.adapter.InternalTransactionInfoAdapter
+import com.rainbowguo.ethexplore.adapter.proxy_transactionsInfoAdapter
+import com.rainbowguo.ethexplore.databinding.FragmentTransactionsBinding
+import kotlinx.coroutines.launch
+
+
+
+
+
+class TransactionInfoFragment : Fragment() {
+    private lateinit var binding: FragmentTransactionsBinding
+    private lateinit var viewMode: transactionInfoMode
+    private lateinit var data: Any
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        binding = FragmentTransactionsBinding.inflate(inflater)
+        return binding.root
     }
 
-
-    @SuppressLint({"SetTextI18n", "ResourceAsColor"})
-    @Override
-    public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
-        assert getArguments() != null;
-        data =  getArguments().getSerializable("data");
-        binding.recyclerView.setLayoutManager(new LinearLayoutManager(view.getContext()));
-        viewMode = new ViewModelProvider(this).get(transactionInfoMode.class);
-        observeData();
-        initData();
+    @SuppressLint("SetTextI18n", "ResourceAsColor")
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        data = arguments?.getSerializable("data") ?: 0
+        binding.recyclerView.layoutManager = LinearLayoutManager(view.context)
+        viewMode = ViewModelProvider(this)[transactionInfoMode::class.java]
+        initData()
+        observeData()
 
     }
+
     @SuppressLint("ResourceAsColor")
-    private  void observeData(){
-        viewMode.getRequestState().observe(this, aBoolean -> {
-            if (aBoolean){
-                binding.ProgressView.setVisibility(View.GONE);
-                binding.scrollView.setVisibility(View.VISIBLE);
-                myAnimation.SmallToBig(binding.scrollView);
-            }else {
-                binding.scrollView.setVisibility(View.GONE);
-                binding.ProgressView.setVisibility(View.GONE);
-                binding.failedContent.setVisibility(View.VISIBLE);
+    private fun observeData() {
+        lifecycleScope.launch{
+            launch {
+                viewMode.requestState.collect{
+                    if(it.state == true){
+                        binding.ProgressView.visibility = View.GONE
+                        binding.scrollView.visibility = View.VISIBLE
+                        myAnimation.SmallToBig(binding.scrollView)
+                    }else if (it.state == false){
+                        binding.scrollView.visibility = View.GONE
+                        binding.ProgressView.visibility = View.GONE
+                        binding.failedContent.visibility = View.VISIBLE
+                    }
+                }
+            }
+            launch {
+                viewMode.fromAddress.collect{
+                    myAnimation.SmallToBig(binding.scrollView)
+                    binding.From.setTextColor(R.color.textLink)
+                    binding.From.text = it
+                    binding.From.setOnClickListener {
+                        val activity = activity as NewMainActivity
+                        val fragment = AddressFragment()
+                        val bundle = Bundle()
+                        bundle.putString("address", binding.From.text.toString())
+                        fragment.arguments = bundle
+                        activity.addFragment(fragment)
+                    }
+                }
+            }
+            launch {
+                viewMode.toAddress.collect{
+                    binding.To.text = it
+                    binding.To.setTextColor(R.color.textLink)
+                    binding.To.setOnClickListener {
+                        val activity = activity as NewMainActivity
+                        val fragment = AddressFragment()
+                        val bundle = Bundle()
+                        bundle.putString("address", binding.To.text.toString())
+                        fragment.arguments = bundle
+                        activity.addFragment(fragment)
+                    }
+                }
+            }
+            launch {
+                viewMode.eth_value.collect{
+                    binding.Value.text = it
+                }
+            }
+            launch {
+                viewMode.dataBean.collect{
+                    if (it.result != null)
+                        binding.recyclerView.adapter = proxy_transactionsInfoAdapter(it.result)
+                }
             }
 
-
-        });
-        viewMode.getFromAddress().observe(this, s -> {
-            myAnimation.SmallToBig(binding.scrollView);
-            binding.From.setText(s);
-            binding.From.setTextColor(R.color.textLink);
-            binding.From.setOnClickListener(v->{
-                MainActivity activity = (MainActivity) getActivity();
-                AddressFragment fragment = new AddressFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("address",binding.From.getText().toString());
-                fragment.setArguments(bundle);
-                if (activity!= null)
-                    activity.addFragment(fragment);
-            });
-        });
-
-        viewMode.getToAddress().observe(this, s-> {
-            binding.To.setText(s);
-            binding.To.setTextColor(R.color.textLink);
-            binding.To.setOnClickListener(v->{
-                MainActivity activity = (MainActivity) getActivity();
-                AddressFragment fragment = new AddressFragment();
-                Bundle bundle = new Bundle();
-                bundle.putString("address",binding.To.getText().toString());
-                fragment.setArguments(bundle);
-                if (activity!= null)
-                    activity.addFragment(fragment);
-            });
-        });
-
-        viewMode.getValue().observe(this,s-> binding.Value.setText(s));
-
-        viewMode.getBean().observe(this , s->{
-            binding.recyclerView.setAdapter(new proxy_transactionsInfoAdapter(s));
-            viewMode.getFromAddress().setValue(s.getFrom());
-            viewMode.getToAddress().setValue(s.getTo());
-            String value = TextUtils.to10(s.getValue());
-            if(! value.equals("0"))
-                value = TextUtils.formatEther(value,null);
-            else
-                value = "0 Ether";
-            viewMode.getValue().setValue(value);
-
-        });
-    }
-    private void initData(){
-        if(data instanceof transactionsBean.ResultDTO){
-            viewMode.getRequestState().setValue(true);
-            transactionsBean.ResultDTO bean = (transactionsBean.ResultDTO )data;
-            binding.recyclerView.setAdapter(new TransactionsInfoAdapter(bean));
-            viewMode.getFromAddress().setValue(bean.getFrom());
-            viewMode.getToAddress().setValue(bean.getTo());
-            String value = TextUtils.formatEther(bean.getValue(),null);
-            viewMode.getValue().setValue(value);
-        }else if (data instanceof internalTransactionsBean.ResultDTO){
-            viewMode.getRequestState().setValue(true);
-            internalTransactionsBean.ResultDTO bean = (internalTransactionsBean.ResultDTO)data;
-            binding.recyclerView.setAdapter(new InternalTransactionInfoAdapter(bean));
-            viewMode.getFromAddress().setValue(bean.getFrom());
-            viewMode.getToAddress().setValue(bean.getTo());
-            String value = TextUtils.formatEther(bean.getValue(),null);
-            viewMode.getValue().setValue(value);
-        }else if(data instanceof String){
-            viewMode.requestProsy_TransactionsInfo((String)data);
         }
 
     }
 
+    private fun initData() {
+        when (data) {
+            is transactionsBean.ResultDTO -> {
+                viewMode.requestState.value = transactionInfoMode.STATE(true)
+                val bean = data as transactionsBean.ResultDTO
+                binding.recyclerView.adapter = TransactionsInfoAdapter(bean)
+                viewMode.fromAddress.value = bean.from
+                viewMode.toAddress.value = bean.to
+                val value = TextUtils.formatEther(bean.value, null)
+                viewMode.eth_value.value = value
+            }
+            is internalTransactionsBean.ResultDTO -> {
+                viewMode.requestState.value = transactionInfoMode.STATE(true)
+                val bean = data as internalTransactionsBean.ResultDTO
+                binding.recyclerView.adapter = InternalTransactionInfoAdapter(bean)
+                viewMode.fromAddress.value = bean.from
+                viewMode.toAddress.value = bean.to
+                val value = TextUtils.formatEther(bean.value, null)
+                viewMode.eth_value.value = value
+            }
+            is String -> {
+                viewMode.requestProsy_TransactionsInfo(data as String)
+            }
+        }
+    }
 }

@@ -1,131 +1,99 @@
-package com.rainbowguo.ethexplore.adapter;
+package com.rainbowguo.ethexplore.adapter
 
-import android.annotation.SuppressLint;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
+import com.rainbowguo.ethexplore.beans.internalTransactionsBean
+import androidx.recyclerview.widget.RecyclerView
+import android.view.ViewGroup
+import android.view.LayoutInflater
+import com.rainbowguo.ethexplore.R
+import android.annotation.SuppressLint
+import com.rainbowguo.ethexplore.fragments.blockFragment
+import android.os.Bundle
+import android.view.View
+import com.rainbowguo.ethexplore.MainActivity
+import android.widget.TextView
+import com.rainbowguo.ethexplore.NewMainActivity
+import com.rainbowguo.ethexplore.Utils.TextUtils
 
-import androidx.annotation.NonNull;
-import androidx.recyclerview.widget.RecyclerView;
-
-import com.rainbowguo.ethexplore.MainActivity;
-import com.rainbowguo.ethexplore.R;
-import com.rainbowguo.ethexplore.Utils.TextUtils;
-import com.rainbowguo.ethexplore.beans.internalTransactionsBean;
-import com.rainbowguo.ethexplore.fragments.blockFragment;
-
-public class InternalTransactionInfoAdapter extends RecyclerView.Adapter<InternalTransactionInfoAdapter.mViewHolder> {
-    private final internalTransactionsBean.ResultDTO bean;
-    public InternalTransactionInfoAdapter(internalTransactionsBean.ResultDTO bean){
-        this.bean = bean;
-    }
-
-    @NonNull
-    @Override
-    public mViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.item_transactions_info,parent,false);
-        return new mViewHolder(view);
+class InternalTransactionInfoAdapter(private val bean: internalTransactionsBean.ResultDTO) :
+    RecyclerView.Adapter<InternalTransactionInfoAdapter.mViewHolder>() {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): mViewHolder {
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_transactions_info, parent, false)
+        return mViewHolder(view)
     }
 
     @SuppressLint("ResourceAsColor")
-    @Override
-    public void onBindViewHolder(@NonNull mViewHolder holder, int position) {
-        switch (position){
-            case 0: {
-                holder.name.setText("hash");//
-                holder.value.setText(bean.getHash());
-                break;
+    override fun onBindViewHolder(holder: mViewHolder, position: Int) {
+        when (position) {
+            0 -> {
+                holder.name.text = "hash"
+                holder.value.text = bean.hash
             }
-            case 1: {
-                holder.name.setText("date");//
-                holder.value.setText(TextUtils.timeStampFormat(bean.getTimeStamp()));
-                break;
+            1 -> {
+                holder.name.text = "date"
+                holder.value.text = TextUtils.timeStampFormat(bean.timeStamp)
             }
-
-            case 2: {
-                holder.name.setText("blockNumber");//
-                holder.value.setText(bean.getBlockNumber());
-                holder.value.setTextColor(R.color.textLink);
-                holder.value.setOnClickListener(v -> {
-                    blockFragment fragment = new blockFragment();
-                    Bundle bundle = new Bundle();
-                    bundle.putString("blockNumber",holder.value.getText().toString());
-                    fragment.setArguments(bundle);
-                    MainActivity activity = (MainActivity)holder.value.getContext();
-                    activity.addFragment(fragment);
-                });
-                break;
+            2 -> {
+                holder.name.text = "blockNumber"
+                holder.value.text = bean.blockNumber
+                holder.value.setTextColor(R.color.textLink)
+                holder.value.setOnClickListener {
+                    val fragment = blockFragment()
+                    val bundle = Bundle()
+                    bundle.putString("blockNumber", holder.value.text.toString())
+                    fragment.arguments = bundle
+                    val activity = holder.value.context as NewMainActivity
+                    activity.addFragment(fragment)
+                }
             }
-
-            case 3: {
-                holder.name.setText("type");
-                holder.value.setText(bean.getType());
-                break;
+            3 -> {
+                holder.name.text = "type"
+                holder.value.text = bean.type
             }
-            case 4: {
-                holder.name.setText("gas");//
-                holder.value.setText(bean.getGas());
-                break;
+            4 -> {
+                holder.name.text = "gas" //
+                holder.value.text = bean.gas
             }
-            case 5: {
-                holder.name.setText("gasUsed");//
-                holder.value.setText(bean.getGasUsed());
-                break;
+            5 -> {
+                holder.name.text = "gasUsed" //
+                holder.value.text = bean.gasUsed
             }
-
-            case 6: {
-                holder.name.setText("traceID");
-                holder.value.setText(bean.getTraceId());
-                break;
+            6 -> {
+                holder.name.text = "traceID"
+                holder.value.text = bean.traceId
             }
-            case 7: {
-                holder.name.setText("isError");//
-                holder.value.setText(bean.getIsError());
-                break;
+            7 -> {
+                holder.name.text = "isError" //
+                holder.value.text = bean.isError
             }
-            case 8: {
-                holder.name.setText("errCode");
-                String errCode = bean.getErrCode();
-                if (errCode.equals(""))
-                    errCode = "-";
-                holder.value.setText(errCode);
-                break;
+            8 -> {
+                holder.name.text = "errCode"
+                var errCode = bean.errCode
+                if (errCode == "") errCode = "-"
+                holder.value.text = errCode
             }
-            case 9: {
-                holder.name.setText("contractAddress");//
-                String contractAddress = bean.getContractAddress();
-                if (contractAddress.equals(""))
-                    contractAddress = "-";
-                holder.value.setText(contractAddress);
-                break;
+            9 -> {
+                holder.name.text = "contractAddress" //
+                var contractAddress = bean.contractAddress
+                if (contractAddress == "") contractAddress = "-"
+                holder.value.text = contractAddress
             }
-            case 10: {
-                holder.name.setText("input");//
-                String input = bean.getInput();
-                if (input.equals(""))
-                    input= "-";
-                holder.value.setText(input);
-                break;
+            10 -> {
+                holder.name.text = "input" //
+                var input = bean.input
+                if (input == "") input = "-"
+                holder.value.text = input
             }
-
         }
     }
 
-    @Override
-    public int getItemCount() {
-        return 11;
+    override fun getItemCount(): Int {
+        return 11
     }
 
-    public static class mViewHolder extends RecyclerView.ViewHolder{
+    class mViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var name: TextView = itemView.findViewById(R.id.name)
+        var value: TextView = itemView.findViewById(R.id.value)
 
-        public TextView name , value;
-
-        public mViewHolder(@NonNull View itemView) {
-            super(itemView);
-            name = itemView.findViewById(R.id.name);
-            value = itemView.findViewById(R.id.value);
-        }
     }
 }

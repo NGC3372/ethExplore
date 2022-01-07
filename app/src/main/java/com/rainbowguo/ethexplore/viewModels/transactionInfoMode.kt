@@ -1,66 +1,54 @@
-package com.rainbowguo.ethexplore.viewModels;
+package com.rainbowguo.ethexplore.viewModels
 
-import android.view.View;
+import android.util.Log
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.viewModelScope
+import com.rainbowguo.ethexplore.Utils.TextUtils
+import com.rainbowguo.ethexplore.beans.proxy_transactionsInfoBean
+import com.rainbowguo.ethexplore.https.EtherScanServer
+import com.rainbowguo.ethexplore.https.HttpUtils
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.launch
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 
-import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.ViewModel;
-import com.rainbowguo.ethexplore.beans.proxy_transactionsInfoBean;
-import com.rainbowguo.ethexplore.https.EtherScanServer;
+class transactionInfoMode : ViewModel() {
+    val fromAddress = MutableStateFlow("")
+    val toAddress = MutableStateFlow("")
+    val eth_value = MutableStateFlow("")
+    val requestState =MutableStateFlow(STATE(null))
 
-import retrofit2.Call;
-import retrofit2.Callback;
-import retrofit2.Response;
+    val dataBean = MutableStateFlow(proxy_transactionsInfoBean())
 
-public class transactionInfoMode extends ViewModel {
-    private final MutableLiveData<String> FromAddress = new MutableLiveData<>();
-    private final MutableLiveData<String> ToAddress = new MutableLiveData<>();
-    private final MutableLiveData<String> Value = new MutableLiveData<>();
-    private final MutableLiveData<Boolean> requestState = new MutableLiveData<>();
-    private final MutableLiveData<proxy_transactionsInfoBean.ResultDTO> Bean = new MutableLiveData<>();
 
-    public MutableLiveData<String> getFromAddress() {
-        return FromAddress;
-    }
-
-    public MutableLiveData<String> getToAddress() {
-        return ToAddress;
-    }
-
-    public MutableLiveData<String> getValue() {
-        return Value;
-    }
-
-    public MutableLiveData<Boolean> getRequestState() {
-        return requestState;
-    }
-
-    public MutableLiveData<proxy_transactionsInfoBean.ResultDTO> getBean() {
-        return Bean;
-    }
-
-    public void requestProsy_TransactionsInfo(String TxHash){
-        EtherScanServer.getInstance().getProxyTransactionsInfo(TxHash, new Callback<proxy_transactionsInfoBean>() {
-            @Override
-            public void onResponse(Call<proxy_transactionsInfoBean> call, Response<proxy_transactionsInfoBean> response) {
-                if (response.body() == null || response.body().getResult() == null)
-                    requestState.setValue(false);
-                else {
-                    requestState.setValue(true);
-                    proxy_transactionsInfoBean.ResultDTO bean = response.body().getResult();
-                    Bean.setValue(bean);
+    fun requestProsy_TransactionsInfo(TxHash: String) {
+        viewModelScope.launch{
+            val handler = CoroutineExceptionHandler { _, e ->
+                Log.i("TAG", "requestData: $e")
+                launch {
+                    requestState.emit(STATE(false))
                 }
-
+            }
+            launch(handler) {
+                val bean = HttpUtils.SearchService.get_ProxyTransactionsInfoBean(TxHash)
+                val from = bean.result.from
+                val to = bean.result.to
+                var value = TextUtils.to10(bean.result.value)
+                value = if (value != "0") TextUtils.formatEther(value, null) else "0 Ether"
+                fromAddress.emit(from)
+                toAddress.emit(to)
+                eth_value.emit(value)
+                requestState.emit(STATE(true))
+                dataBean.emit(bean)
             }
 
-            @Override
-            public void onFailure(Call<proxy_transactionsInfoBean> call, Throwable t) {
-                requestState.setValue(false);
-            }
-        });
+        }
+
     }
 
-
-
-
-
+   data class STATE(val state :Boolean?)
 }

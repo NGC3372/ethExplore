@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
 
         fragmentManager = getSupportFragmentManager();
         fragmentManager.beginTransaction().add(R.id.fragmentBox,new HomeFragment()).commit();
-        bind.searchButton.setOnClickListener(v->new mDialogFragment().show(fragmentManager,null));
+        //bind.searchButton.setOnClickListener(v->new mDialogFragment().show(fragmentManager,null));
         mToast.create(this);
     }
 

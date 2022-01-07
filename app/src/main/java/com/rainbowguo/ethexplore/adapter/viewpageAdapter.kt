@@ -1,128 +1,119 @@
-package com.rainbowguo.ethexplore.adapter;
+package com.rainbowguo.ethexplore.adapter
 
-import android.util.Log;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.LinearLayout;
-import android.widget.ProgressBar;
-import androidx.annotation.NonNull;
-import androidx.core.widget.NestedScrollView;
-import androidx.lifecycle.MutableLiveData;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
-import com.rainbowguo.ethexplore.R;
+import androidx.recyclerview.widget.RecyclerView
+import com.rainbowguo.ethexplore.adapter.TransactionAdapter
+import com.rainbowguo.ethexplore.adapter.InternalTransactionAdapter
+import com.rainbowguo.ethexplore.adapter.ContractInfoAdapter
+import androidx.lifecycle.MutableLiveData
+import android.view.ViewGroup
+import android.view.LayoutInflater
+import android.view.View
+import android.widget.ImageView
+import android.widget.ProgressBar
+import com.rainbowguo.ethexplore.R
+import androidx.core.widget.NestedScrollView
+import androidx.recyclerview.widget.LinearLayoutManager
+import java.util.ArrayList
 
-import java.util.ArrayList;
+class viewpageAdapter : RecyclerView.Adapter<viewpageAdapter.mViewHolder> {
+    private val adapter1: TransactionAdapter
+    private val adapter2: InternalTransactionAdapter
+    private var adapter3: ContractInfoAdapter? = null
+    val transactionsPage = MutableLiveData(1)
+    val internalTransactionsPage = MutableLiveData(1)
+    private val holderList: ArrayList<mViewHolder>
 
-
-public class viewpageAdapter extends RecyclerView.Adapter<viewpageAdapter.mViewHolder> {
-    private static final String TAG = "viewpageAdapter";
-    private final TransactionAdapter adapter1;
-    private final InternalTransactionAdapter adapter2;
-    private ContractInfoAdapter adapter3;
-    private final MutableLiveData<Integer> transactionsPage = new MutableLiveData<>(1);
-    private final MutableLiveData<Integer> internalTransactionsPage = new MutableLiveData<>(1);
-    private final ArrayList<mViewHolder> holderList;
-
-    public viewpageAdapter(TransactionAdapter adapter1, InternalTransactionAdapter adapter2){
-        this.adapter1 = adapter1;
-        this.adapter2 = adapter2;
-        holderList = new ArrayList<>();
+    companion object {
+        private const val TAG = "viewpageAdapter"
     }
 
-    public viewpageAdapter(TransactionAdapter adapter1,InternalTransactionAdapter adapter2, ContractInfoAdapter adapter3){
-        this.adapter1 = adapter1;
-        this.adapter2 = adapter2;
-        this.adapter3 = adapter3;
-        holderList = new ArrayList<>();
+    constructor(adapter1: TransactionAdapter, adapter2: InternalTransactionAdapter) {
+        this.adapter1 = adapter1
+        this.adapter2 = adapter2
+        holderList = ArrayList()
     }
 
-    public MutableLiveData<Integer> getTransactionsPage() {
-        return transactionsPage;
+    constructor(
+        adapter1: TransactionAdapter,
+        adapter2: InternalTransactionAdapter,
+        adapter3: ContractInfoAdapter?
+    ) {
+        this.adapter1 = adapter1
+        this.adapter2 = adapter2
+        this.adapter3 = adapter3
+        holderList = ArrayList()
     }
 
-    public MutableLiveData<Integer> getInternalTransactionsPage() {
-        return internalTransactionsPage;
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): mViewHolder {
+        val view =
+            LayoutInflater.from(parent.context).inflate(R.layout.transactions_list, parent, false)
+        val holder = mViewHolder(view)
+        holderList.add(holder)
+        return holder
     }
 
-    @NonNull
-    @Override
-    public mViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.transactions_list, parent, false);
-        mViewHolder holder = new mViewHolder(view);
-        holderList.add(holder);
-        return holder;
-    }
-
-    @Override
-    public void onBindViewHolder(@NonNull mViewHolder holder, int position) {
-        if (position == 0){
-            holder.recyclerView.setAdapter(adapter1);
-            holder.scrollView.setOnScrollChangeListener((View.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-                 Integer pageValue = transactionsPage.getValue();
-                 if(! holder.scrollView.canScrollVertically(1) && pageValue!= null && pageValue != -1){
-                     transactionsPage.setValue(pageValue + 1);
-                 }
-            });
-        }else if(position == 1){
-            holder.recyclerView.setAdapter(adapter2);
-            holder.scrollView.setOnScrollChangeListener((View.OnScrollChangeListener) (v, scrollX, scrollY, oldScrollX, oldScrollY) -> {
-                Integer pageValue = internalTransactionsPage.getValue();
-                if(! holder.scrollView.canScrollVertically(1)&& pageValue!= null && pageValue != -1){
-                    internalTransactionsPage.setValue(pageValue + 1);
-                }
-            });
-        }
-        else if(position == 2){
-            holder.recyclerView.setAdapter(adapter3);
-            holder.itemView.findViewById(R.id.ProgressView).setVisibility(View.GONE);
-        }
-
-    }
-
-    @Override
-    public int getItemCount() {
-        if(adapter3 == null)
-            return 2;
-        else
-            return 3;
-    }
-
-    public void setTransactionsPageProgressBarGone(){
-        holderList.get(0).progressBar.setVisibility(View.GONE);
-    }
-
-    public void setInternalTransactionsPageProgressBarGone(){
-        holderList.get(1).progressBar.setVisibility(View.GONE);
-
-    }
-    public void setTransactionsNullContent(){
-        holderList.get(0).scrollView.setVisibility(View.GONE);
-        holderList.get(0).nullContentView.setVisibility(View.VISIBLE);
-    }
-
-    public void setInternalTransactionsNullContent(){
-        holderList.get(1).scrollView.setVisibility(View.GONE);
-        holderList.get(1).nullContentView.setVisibility(View.VISIBLE);
-    }
-
-    public static class mViewHolder extends RecyclerView.ViewHolder{
-        public RecyclerView recyclerView ;
-        public ProgressBar progressBar;
-        public NestedScrollView scrollView;
-        public ImageView nullContentView;
-        public mViewHolder(@NonNull View itemView) {
-            super(itemView);
-            recyclerView = itemView.findViewById(R.id.recyclerView);
-            LinearLayoutManager manager = new LinearLayoutManager(itemView.getContext());
-            manager.setOrientation(LinearLayoutManager.VERTICAL);
-            recyclerView.setLayoutManager(manager);
-
-            progressBar = itemView.findViewById(R.id.ProgressView);
-            scrollView = itemView.findViewById(R.id.scrollView);
-            nullContentView = itemView.findViewById(R.id.nullContent);
+    override fun onBindViewHolder(holder: mViewHolder, position: Int) {
+        when (position) {
+            0 -> {
+                holder.recyclerView.adapter = adapter1
+                holder.scrollView.setOnScrollChangeListener(View.OnScrollChangeListener { _, _, _, _, _ ->
+                    val pageValue = transactionsPage.value
+                    if (!holder.scrollView.canScrollVertically(1) && pageValue != null && pageValue != -1) {
+                        transactionsPage.value = pageValue + 1
+                    }
+                })
+            }
+            1 -> {
+                holder.recyclerView.adapter = adapter2
+                holder.scrollView.setOnScrollChangeListener(View.OnScrollChangeListener { _, _, _, _, _ ->
+                    val pageValue = internalTransactionsPage.value
+                    if (!holder.scrollView.canScrollVertically(1) && pageValue != null && pageValue != -1) {
+                        internalTransactionsPage.value = pageValue + 1
+                    }
+                })
+            }
+            2 -> {
+                holder.recyclerView.adapter = adapter3
+                holder.itemView.findViewById<View>(R.id.ProgressView).visibility = View.GONE
+            }
         }
     }
+
+    override fun getItemCount(): Int {
+        return if (adapter3 == null) 2 else 3
+    }
+
+    fun setTransactionsPageProgressBarGone() {
+        holderList[0].progressBar.visibility = View.GONE
+    }
+
+    fun setInternalTransactionsPageProgressBarGone() {
+        holderList[1].progressBar.visibility = View.GONE
+    }
+
+    fun setTransactionsNullContent() {
+        holderList[0].scrollView.visibility = View.GONE
+        holderList[0].nullContentView.visibility = View.VISIBLE
+    }
+
+    fun setInternalTransactionsNullContent() {
+        holderList[1].scrollView.visibility = View.GONE
+        holderList[1].nullContentView.visibility = View.VISIBLE
+    }
+
+    class mViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
+        var recyclerView: RecyclerView = itemView.findViewById(R.id.recyclerView)
+        var progressBar: ProgressBar = itemView.findViewById(R.id.ProgressView)
+        var scrollView: NestedScrollView = itemView.findViewById(R.id.scrollView)
+        var nullContentView: ImageView = itemView.findViewById(R.id.nullContent)
+
+        init {
+            val manager = LinearLayoutManager(itemView.context)
+            manager.orientation = LinearLayoutManager.VERTICAL
+            recyclerView.layoutManager = manager
+
+        }
+    }
+
+
 }
