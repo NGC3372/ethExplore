@@ -2,19 +2,13 @@ package com.rainbowguo.ethexplore.viewModels
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.rainbowguo.ethexplore.Utils.TextUtils
 import com.rainbowguo.ethexplore.beans.proxy_transactionsInfoBean
-import com.rainbowguo.ethexplore.https.EtherScanServer
 import com.rainbowguo.ethexplore.https.HttpUtils
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 
 class transactionInfoMode : ViewModel() {
     val fromAddress = MutableStateFlow("")

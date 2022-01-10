@@ -9,7 +9,6 @@ import android.annotation.SuppressLint
 import com.rainbowguo.ethexplore.fragments.blockFragment
 import android.os.Bundle
 import android.view.View
-import com.rainbowguo.ethexplore.MainActivity
 import android.widget.TextView
 import com.rainbowguo.ethexplore.NewMainActivity
 import com.rainbowguo.ethexplore.Utils.TextUtils

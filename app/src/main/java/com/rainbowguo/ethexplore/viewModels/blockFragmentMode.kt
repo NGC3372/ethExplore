@@ -1,23 +1,21 @@
 package com.rainbowguo.ethexplore.viewModels
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import com.rainbowguo.ethexplore.Utils.TextUtils
-import com.rainbowguo.ethexplore.https.EtherScanServer
-import com.rainbowguo.ethexplore.beans.blockInfoBean
+import com.rainbowguo.ethexplore.Utils.mToast
+import com.rainbowguo.ethexplore.https.HttpUtils
+import kotlinx.coroutines.CoroutineExceptionHandler
+import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import java.util.ArrayList
 
 class blockFragmentMode : ViewModel() {
-    val blockNumber = MutableLiveData<String>()
-    val date = MutableLiveData<String>()
-    val miner = MutableLiveData<String>()
-    val transactionsSize = MutableLiveData<Int>()
-    val requestState = MutableLiveData<Boolean>()
+    val blockNumber = MutableStateFlow("")
+    val date = MutableStateFlow("")
+    val miner = MutableStateFlow("")
+    val requestState = MutableStateFlow(STATE(null))
     private val transactionsList: MutableList<String> = ArrayList()
     private val TAG = "blockFragmentMode"
     fun getTransactionsList(): List<String> {
@@ -25,31 +23,22 @@ class blockFragmentMode : ViewModel() {
     }
 
     fun requestBlockData(number: String) {
-        viewModelScope.launch {
-
+        viewModelScope.launch(CoroutineExceptionHandler{ _, e ->
+            Log.i("TAG", "requestData: $e")
+            viewModelScope.launch {
+                requestState.emit(STATE(false))
+            }
+            mToast.showToastRequestFail()
+        }) {
+            val bean = HttpUtils.SearchService.get_ProxyBlockInfo(number)
+            requestState.emit(STATE(true))
+            val timeStamp = TextUtils.to10(bean.result.timestamp)
+            date.value = TextUtils.timeStampFormat(timeStamp)
+            miner.value = bean.result.miner
+            transactionsList.addAll(bean.result.transactions)
         }
 
-        EtherScanServer.getInstance().getBlockInfo(TextUtils.to16(number), object : Callback<blockInfoBean?> {
-            override fun onResponse(
-                call: Call<blockInfoBean?>,
-                response: Response<blockInfoBean?>
-            ) {
-                requestState.value = true
-                val bean = response.body()
-                if (bean == null || bean.result == null) requestState.setValue(false) else {
-                    blockNumber.value = TextUtils.to10(bean.result.number)
-                    val timeStamp = TextUtils.to10(bean.result.timestamp)
-                    date.value = TextUtils.timeStampFormat(timeStamp)
-                    miner.value = bean.result.miner
-                    transactionsList.addAll(bean.result.transactions)
-                    val listSize = transactionsList.size
-                    transactionsSize.setValue(listSize)
-                }
-            }
-
-            override fun onFailure(call: Call<blockInfoBean?>, t: Throwable) {
-                requestState.value = false
-            }
-        })
     }
+
+    data class STATE(val state:Boolean?)
 }

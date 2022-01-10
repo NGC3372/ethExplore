@@ -6,7 +6,6 @@ import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.os.Bundle
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.View
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,10 +13,8 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.lifecycleScope
 import com.rainbowguo.ethexplore.Utils.myAnimation
 import com.rainbowguo.ethexplore.R
-import com.rainbowguo.ethexplore.MainActivity
 import com.rainbowguo.ethexplore.NewMainActivity
 import com.rainbowguo.ethexplore.Utils.TextUtils
-import com.rainbowguo.ethexplore.fragments.AddressFragment
 
 import com.rainbowguo.ethexplore.beans.transactionsBean
 import com.rainbowguo.ethexplore.adapter.TransactionsInfoAdapter

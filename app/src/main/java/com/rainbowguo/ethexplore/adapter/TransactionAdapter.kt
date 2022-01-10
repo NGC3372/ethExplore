@@ -5,8 +5,6 @@ import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
 import android.view.LayoutInflater
 import com.rainbowguo.ethexplore.R
-import com.rainbowguo.ethexplore.adapter.TransactionAdapter
-import com.rainbowguo.ethexplore.MainActivity
 import com.rainbowguo.ethexplore.fragments.TransactionInfoFragment
 import android.os.Bundle
 import android.util.Log
