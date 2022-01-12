@@ -1,9 +1,6 @@
 package com.rainbowguo.ethexplore.adapter
 
 import androidx.recyclerview.widget.RecyclerView
-import com.rainbowguo.ethexplore.adapter.TransactionAdapter
-import com.rainbowguo.ethexplore.adapter.InternalTransactionAdapter
-import com.rainbowguo.ethexplore.adapter.ContractInfoAdapter
 import androidx.lifecycle.MutableLiveData
 import android.view.ViewGroup
 import android.view.LayoutInflater
@@ -111,8 +108,8 @@ class viewpageAdapter : RecyclerView.Adapter<viewpageAdapter.mViewHolder> {
             val manager = LinearLayoutManager(itemView.context)
             manager.orientation = LinearLayoutManager.VERTICAL
             recyclerView.layoutManager = manager
-
         }
+
     }
 
 

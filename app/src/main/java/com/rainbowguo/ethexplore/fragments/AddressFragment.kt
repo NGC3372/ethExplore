@@ -41,11 +41,7 @@ class AddressFragment : Fragment() {
     }
 
 
-    override fun onCreateView(
-        inflater: LayoutInflater,
-        container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View {
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
         bind = FragmentAddressBinding.inflate(inflater)
         address = arguments?.getString("address").toString()
         bind.viewPager.offscreenPageLimit = 1
@@ -67,24 +63,7 @@ class AddressFragment : Fragment() {
     private fun observeData(){
         val transactionAdapter = TransactionAdapter(viewMode.transactionList, address)
         val internalTransactionAdapter = InternalTransactionAdapter(viewMode.internalList, address)
-        val contractInfoAdapter = ContractInfoAdapter(viewMode.contractData.value)
-
-        adapter.transactionsPage.observe(viewLifecycleOwner, { integer: Int ->
-            if (integer != -1) viewMode.getTransactionsData(integer.toString(),)
-            else if (viewMode.transactionList.size == 0) {
-                Log.i(TAG, "onViewCreated: transaction 000000")
-                adapter.setTransactionsNullContent()
-            }
-        }
-        )
-        adapter.internalTransactionsPage.observe(viewLifecycleOwner, { integer: Int ->
-            if (integer != -1) viewMode.getInternalTransactionsData(integer.toString(),)
-            else if (viewMode.internalList.size == 0) {
-                Log.i(TAG, "onViewCreated: internaltransaction 000000")
-                adapter.setInternalTransactionsNullContent()
-            }
-        }
-        )
+        val contractInfoAdapter = ContractInfoAdapter(viewMode.contractData)
 
         lifecycleScope.launch{
             launch {
@@ -99,40 +78,49 @@ class AddressFragment : Fragment() {
                 }
             }
             launch {
-                viewMode.contractData.collect{
-                    adapter.notifyDataSetChanged()
+                viewMode.contractDataState.collect{
+                    if (it == "ok")
+                        contractInfoAdapter.notifyDataSetChanged()
                 }
             }
             launch {
                 viewMode.TransactionsDataState.collect{
-                    if (it == "null"){
-                        adapter.transactionsPage.value = -1
-                        adapter.setTransactionsPageProgressBarGone()
-                    }else if (it == "to_end"){
-                        adapter.transactionsPage.value = -1
-                        adapter.setTransactionsPageProgressBarGone()
+                    when (it) {
+                        "null" -> {
+                            adapter.transactionsPage.value = -1
+                            adapter.setTransactionsPageProgressBarGone()
+                        }
+                        "to_end" -> {
+                            adapter.transactionsPage.value = -1
+                            adapter.setTransactionsPageProgressBarGone()
+                        }
+                        "ok" -> {
+                            adapter.transactionsPage.value =
+                                adapter.transactionsPage.value?.plus(1)
+                        }
                     }
                 }
             }
             launch {
                 viewMode.internalTransactionsDataState.collect{
-                    if (it == "null"){
-                        adapter.internalTransactionsPage.value = -1
-                        adapter.setInternalTransactionsPageProgressBarGone()
-                    }else if (it == "to_end"){
-                        adapter.setInternalTransactionsPageProgressBarGone()
-                        adapter.internalTransactionsPage.value = -1
+                    when (it) {
+                        "null" -> {
+                            adapter.internalTransactionsPage.value = -1
+                            adapter.setInternalTransactionsPageProgressBarGone()
+                        }
+                        "to_end" -> {
+                            adapter.setInternalTransactionsPageProgressBarGone()
+                            adapter.internalTransactionsPage.value = -1
+                        }
+                        "ok" -> {
+
+                        }
                     }
                 }
             }
 
             launch {
                 viewMode.addressType.collect{
-                    bind.content.visibility = View.VISIBLE
-                    bind.progressBar.visibility = View.GONE
-                    myAnimation.SmallToBig(bind.content)
-                    bind.role.text = it
-                    bind.address.text = address
                     if (it == "Address") {
                         bind.roleImg.setImageResource(R.drawable.user)
                         adapter = viewpageAdapter(transactionAdapter, internalTransactionAdapter)
@@ -141,7 +129,10 @@ class AddressFragment : Fragment() {
                             bind.tabLayout,
                             bind.viewPager
                         ) { tab: TabLayout.Tab, position: Int ->
-                            if (position == 0) tab.text = "Transactions" else tab.text = "Internal Txns"
+                            when (position) {
+                                0 -> tab.text = "Transactions"
+                                1 -> tab.text = "Internal Txns"
+                            }
                         }.attach()
                     } else if (it == "Contract") {
                         bind.roleImg.setImageResource(R.drawable.contract)
@@ -155,11 +146,37 @@ class AddressFragment : Fragment() {
                             bind.tabLayout,
                             bind.viewPager
                         ) { tab: TabLayout.Tab, position: Int ->
-                            if (position == 0) tab.text = "Transactions" else if (position == 1) tab.text =
-                                "Internal Txns" else tab.text = "Contract"
+                            when (position) {
+                                0 -> tab.text = "Transactions"
+                                1 -> tab.text = "Internal Txns"
+                                2 -> tab.text = "Contract"
+                            }
                         }.attach()
                         viewMode.getContractData()
                     }
+                    if (it != ""){
+                        bind.content.visibility = View.VISIBLE
+                        bind.progressBar.visibility = View.GONE
+                        myAnimation.SmallToBig(bind.content)
+                        bind.role.text = it
+                        bind.address.text = address
+                        adapter.transactionsPage.observe(viewLifecycleOwner, { integer: Int ->
+                            if (integer != -1) viewMode.getTransactionsData(integer.toString(),)
+                            else if (viewMode.transactionList.size == 0) {
+                                Log.i(TAG, "onViewCreated: transaction 000000")
+                                adapter.setTransactionsNullContent()
+                            }
+                        }
+                        )
+                        adapter.internalTransactionsPage.observe(viewLifecycleOwner, { integer: Int ->
+                            if (integer != -1) viewMode.getInternalTransactionsData(integer.toString(),)
+                            else if (viewMode.internalList.size == 0) {
+                                Log.i(TAG, "onViewCreated: internaltransaction 000000")
+                                adapter.setInternalTransactionsNullContent()
+                            }
+                        })
+                    }
+
                 }
             }
         }

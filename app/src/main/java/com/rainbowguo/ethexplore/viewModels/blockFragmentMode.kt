@@ -16,7 +16,7 @@ class blockFragmentMode : ViewModel() {
     val date = MutableStateFlow("")
     val miner = MutableStateFlow("")
     val requestState = MutableStateFlow(STATE(null))
-    private val transactionsList: MutableList<String> = ArrayList()
+    private val transactionsList:  ArrayList<String> = ArrayList()
     private val TAG = "blockFragmentMode"
     fun getTransactionsList(): List<String> {
         return transactionsList
@@ -24,18 +24,20 @@ class blockFragmentMode : ViewModel() {
 
     fun requestBlockData(number: String) {
         viewModelScope.launch(CoroutineExceptionHandler{ _, e ->
-            Log.i("TAG", "requestData: $e")
+            Log.i(TAG, "requestData: $e")
             viewModelScope.launch {
                 requestState.emit(STATE(false))
             }
             mToast.showToastRequestFail()
         }) {
-            val bean = HttpUtils.SearchService.get_ProxyBlockInfo(number)
-            requestState.emit(STATE(true))
+            val bean = HttpUtils.SearchService.get_ProxyBlockInfo(TextUtils.to16(number))
+            Log.i(TAG, "requestBlockData: ok ${bean.result.transactions}")
             val timeStamp = TextUtils.to10(bean.result.timestamp)
+
             date.value = TextUtils.timeStampFormat(timeStamp)
             miner.value = bean.result.miner
             transactionsList.addAll(bean.result.transactions)
+            requestState.emit(STATE(true))
         }
 
     }

@@ -39,9 +39,7 @@ class blockFragment : Fragment() {
         val blockNumber = requireArguments().getString("blockNumber")
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = BlockInfoAdapter(viewMode.getTransactionsList())
-        if (blockNumber != null) {
-            viewMode.requestBlockData(blockNumber)
-        }
+        blockNumber?.let { viewMode.requestBlockData(blockNumber) }
         binding.miner.setTextColor(R.color.textLink)
         binding.miner.setOnClickListener {
             val text = binding.miner.text.toString()
@@ -65,12 +63,12 @@ class blockFragment : Fragment() {
                 viewMode.requestState.collect{
                     if (it.state == false){
                         binding.ProgressView.visibility = View.GONE
-                        myAnimation.SmallToBig(binding.content)
-                        binding.content.visibility = View.VISIBLE
-                    }else if (it.state == true){
-                        binding.ProgressView.visibility = View.GONE
                         binding.content.visibility = View.GONE
                         binding.failedContent.visibility = View.VISIBLE
+                    }else if (it.state == true){
+                        binding.ProgressView.visibility = View.GONE
+                        myAnimation.SmallToBig(binding.content)
+                        binding.content.visibility = View.VISIBLE
 
                         val dataLength = viewMode.getTransactionsList().size
                         if (dataLength == 0) {
@@ -81,6 +79,7 @@ class blockFragment : Fragment() {
                     }
                 }
             }
+
             launch {
                 viewMode.blockNumber.collect{
                     binding.blockNumber.text = it

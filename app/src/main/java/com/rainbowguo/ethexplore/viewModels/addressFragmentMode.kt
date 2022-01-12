@@ -25,9 +25,10 @@ class addressFragmentMode(address: String) : ViewModel() {
     val requestState = MutableStateFlow(STATE(null))
     val transactionList = ArrayList<transactionsBean.ResultDTO>()
     val internalList = ArrayList<internalTransactionsBean.ResultDTO>()
+    val contractData = HashMap<String,String>()
     val TransactionsDataState = MutableStateFlow("")
     val internalTransactionsDataState = MutableStateFlow("")
-    val contractData = MutableStateFlow(HashMap<String,String>())
+    val contractDataState = MutableStateFlow("")
     private var wrongHandler : CoroutineExceptionHandler = CoroutineExceptionHandler{ _, e ->
         Log.i("TAG", "requestData: $e")
         viewModelScope.launch {
@@ -63,7 +64,7 @@ class addressFragmentMode(address: String) : ViewModel() {
             map["byteCode"] = byteCode
             map["abi"] = abi
             map["code"] = code
-            contractData.emit(map)
+            contractDataState.emit("ok")
         }
     }
 
@@ -71,10 +72,12 @@ class addressFragmentMode(address: String) : ViewModel() {
         viewModelScope.launch(wrongHandler) {
             val bean = HttpUtils.SearchService.getTransactions(Address,page)
             val list = bean.result
+            Log.i(TAG, "getTransactionsData: ${list.size}")
             if (list.size ==0)
                 TransactionsDataState.emit("null")
             else{
                 transactionList.addAll(list)
+                TransactionsDataState.emit("ok")
                 if (list.size < 10)
                     TransactionsDataState.emit("to_end")
             }
@@ -89,6 +92,7 @@ class addressFragmentMode(address: String) : ViewModel() {
                 internalTransactionsDataState.emit("null")
             else{
                 internalList.addAll(list)
+                internalTransactionsDataState.emit("ok")
                 if (list.size < 10)
                     internalTransactionsDataState.emit("to_end")
             }
