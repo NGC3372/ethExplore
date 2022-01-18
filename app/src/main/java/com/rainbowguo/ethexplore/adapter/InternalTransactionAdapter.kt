@@ -1,5 +1,6 @@
 package com.rainbowguo.ethexplore.adapter
 
+import android.annotation.SuppressLint
 import com.rainbowguo.ethexplore.beans.internalTransactionsBean
 import androidx.recyclerview.widget.RecyclerView
 import android.view.ViewGroup
@@ -27,12 +28,13 @@ class InternalTransactionAdapter(
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): mViewHolder {
-        val view =
-            LayoutInflater.from(parent.context).inflate(R.layout.item_transaction, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.item_transaction, parent, false)
         Log.i(TAG, "onCreateViewHolder: ")
         return mViewHolder(view)
     }
 
+    @SuppressLint("SetTextI18n")
     override fun onBindViewHolder(holder: mViewHolder, position: Int) {
         Log.i(TAG, "onBindViewHolder: binddata")
         val transaction = internalTransactionList[position]

@@ -25,9 +25,6 @@ import com.rainbowguo.ethexplore.databinding.FragmentTransactionsBinding
 import kotlinx.coroutines.launch
 
 
-
-
-
 class TransactionInfoFragment : Fragment() {
     private lateinit var binding: FragmentTransactionsBinding
     private lateinit var viewMode: transactionInfoMode

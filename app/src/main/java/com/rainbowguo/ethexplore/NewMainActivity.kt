@@ -27,9 +27,9 @@ class NewMainActivity : AppCompatActivity() {
     }
 
 
-    fun addFragment(fragment: Fragment?) {
+    fun addFragment(fragment: Fragment) {
         fragmentManager.beginTransaction()
-            .add(R.id.fragmentBox, fragment!!).addToBackStack(null).commit()
+            .add(R.id.fragmentBox, fragment).addToBackStack(null).commit()
     }
 
 

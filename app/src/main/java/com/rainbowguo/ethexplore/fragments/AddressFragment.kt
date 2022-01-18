@@ -79,13 +79,15 @@ class AddressFragment : Fragment() {
             }
             launch {
                 viewMode.contractDataState.collect{
-                    if (it == "ok")
+                    if (it == "ok"){
+                        Log.i(TAG, "observeData: get contract data")
                         contractInfoAdapter.notifyDataSetChanged()
+                    }
                 }
             }
             launch {
                 viewMode.TransactionsDataState.collect{
-                    when (it) {
+                    when (it.state) {
                         "null" -> {
                             adapter.transactionsPage.value = -1
                             adapter.setTransactionsPageProgressBarGone()
@@ -93,17 +95,20 @@ class AddressFragment : Fragment() {
                         "to_end" -> {
                             adapter.transactionsPage.value = -1
                             adapter.setTransactionsPageProgressBarGone()
+                            transactionAdapter.notifyDataSetChanged()
                         }
                         "ok" -> {
-                            adapter.transactionsPage.value =
-                                adapter.transactionsPage.value?.plus(1)
+                            Log.i(TAG, "observeData: get transaction data")
+
+                            transactionAdapter.notifyDataSetChanged()
+
                         }
                     }
                 }
             }
             launch {
                 viewMode.internalTransactionsDataState.collect{
-                    when (it) {
+                    when (it.state) {
                         "null" -> {
                             adapter.internalTransactionsPage.value = -1
                             adapter.setInternalTransactionsPageProgressBarGone()
@@ -111,9 +116,10 @@ class AddressFragment : Fragment() {
                         "to_end" -> {
                             adapter.setInternalTransactionsPageProgressBarGone()
                             adapter.internalTransactionsPage.value = -1
+                            internalTransactionAdapter.notifyDataSetChanged()
                         }
                         "ok" -> {
-
+                            internalTransactionAdapter.notifyDataSetChanged()
                         }
                     }
                 }
@@ -161,11 +167,16 @@ class AddressFragment : Fragment() {
                         bind.role.text = it
                         bind.address.text = address
                         adapter.transactionsPage.observe(viewLifecycleOwner, { integer: Int ->
-                            if (integer != -1) viewMode.getTransactionsData(integer.toString(),)
+                            if (integer != -1) {
+                                viewMode.getTransactionsData(integer.toString())
+                                Log.i(TAG, "observeData: transaction data ++ $integer")
+                            }
+                               
                             else if (viewMode.transactionList.size == 0) {
                                 Log.i(TAG, "onViewCreated: transaction 000000")
                                 adapter.setTransactionsNullContent()
                             }
+
                         }
                         )
                         adapter.internalTransactionsPage.observe(viewLifecycleOwner, { integer: Int ->

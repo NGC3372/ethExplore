@@ -53,21 +53,21 @@ class viewpageAdapter : RecyclerView.Adapter<viewpageAdapter.mViewHolder> {
         when (position) {
             0 -> {
                 holder.recyclerView.adapter = adapter1
-                holder.scrollView.setOnScrollChangeListener(View.OnScrollChangeListener { _, _, _, _, _ ->
+                holder.scrollView.setOnScrollChangeListener { _, _, _, _, _ ->
                     val pageValue = transactionsPage.value
                     if (!holder.scrollView.canScrollVertically(1) && pageValue != null && pageValue != -1) {
                         transactionsPage.value = pageValue + 1
                     }
-                })
+                }
             }
             1 -> {
                 holder.recyclerView.adapter = adapter2
-                holder.scrollView.setOnScrollChangeListener(View.OnScrollChangeListener { _, _, _, _, _ ->
+                holder.scrollView.setOnScrollChangeListener { _, _, _, _, _ ->
                     val pageValue = internalTransactionsPage.value
                     if (!holder.scrollView.canScrollVertically(1) && pageValue != null && pageValue != -1) {
                         internalTransactionsPage.value = pageValue + 1
                     }
-                })
+                }
             }
             2 -> {
                 holder.recyclerView.adapter = adapter3

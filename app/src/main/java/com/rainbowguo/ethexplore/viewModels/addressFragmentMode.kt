@@ -26,8 +26,8 @@ class addressFragmentMode(address: String) : ViewModel() {
     val transactionList = ArrayList<transactionsBean.ResultDTO>()
     val internalList = ArrayList<internalTransactionsBean.ResultDTO>()
     val contractData = HashMap<String,String>()
-    val TransactionsDataState = MutableStateFlow("")
-    val internalTransactionsDataState = MutableStateFlow("")
+    val TransactionsDataState = MutableStateFlow(transactionsRequestState(""))
+    val internalTransactionsDataState = MutableStateFlow(transactionsRequestState(""))
     val contractDataState = MutableStateFlow("")
     private var wrongHandler : CoroutineExceptionHandler = CoroutineExceptionHandler{ _, e ->
         Log.i("TAG", "requestData: $e")
@@ -60,10 +60,9 @@ class addressFragmentMode(address: String) : ViewModel() {
             var code = bean.result[0].sourceCode
             if (code.equals("")) code = "-"
             if(abi .equals("Contract source code not verified")) abi = "-"
-            val map = HashMap<String,String>()
-            map["byteCode"] = byteCode
-            map["abi"] = abi
-            map["code"] = code
+            contractData["byteCode"] = byteCode
+            contractData[abi] = abi
+            contractData[code] = code
             contractDataState.emit("ok")
         }
     }
@@ -74,27 +73,27 @@ class addressFragmentMode(address: String) : ViewModel() {
             val list = bean.result
             Log.i(TAG, "getTransactionsData: ${list.size}")
             if (list.size ==0)
-                TransactionsDataState.emit("null")
+                TransactionsDataState.emit(transactionsRequestState("null"))
             else{
                 transactionList.addAll(list)
-                TransactionsDataState.emit("ok")
+                TransactionsDataState.emit(transactionsRequestState("ok"))
                 if (list.size < 10)
-                    TransactionsDataState.emit("to_end")
+                    TransactionsDataState.emit(transactionsRequestState("to_end"))
             }
         }
     }
 
-    fun getInternalTransactionsData(page: String, ) {
+    fun getInternalTransactionsData(page: String) {
         viewModelScope.launch(wrongHandler){
             val bean = HttpUtils.SearchService.getInternalTransactions(Address,page)
             val list = bean.result
             if (list.size == 0)
-                internalTransactionsDataState.emit("null")
+                internalTransactionsDataState.emit(transactionsRequestState("null"))
             else{
                 internalList.addAll(list)
-                internalTransactionsDataState.emit("ok")
+                internalTransactionsDataState.emit(transactionsRequestState("ok"))
                 if (list.size < 10)
-                    internalTransactionsDataState.emit("to_end")
+                    internalTransactionsDataState.emit(transactionsRequestState("to_end"))
             }
         }
     }
@@ -108,4 +107,5 @@ class addressFragmentMode(address: String) : ViewModel() {
     }
 
     data class STATE(val state : Boolean?)
+    class transactionsRequestState(val state:String)
 }
