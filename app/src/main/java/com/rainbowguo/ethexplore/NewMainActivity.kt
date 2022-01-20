@@ -1,5 +1,6 @@
 package com.rainbowguo.ethexplore
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -22,7 +23,10 @@ class NewMainActivity : AppCompatActivity() {
         setSupportActionBar(bind.toolbar)
         fragmentManager = supportFragmentManager
         fragmentManager.beginTransaction().add(R.id.fragmentBox, HomeFragment()).commit()
-        bind.searchButton.setOnClickListener { SearchFragment().show(fragmentManager, null) }
+        bind.searchButton.setOnClickListener {
+            SearchFragment().show(fragmentManager, null)
+            //startActivity(Intent(this,QRCodeActivity::class.java))
+        }
         mToast.create(this)
     }
 

@@ -21,7 +21,7 @@ class proxy_transactionsInfoAdapter(private val bean : proxy_transactionsInfoBea
         return mViewHolder(view)
     }
 
-    @SuppressLint("ResourceAsColor")
+    @SuppressLint("ResourceAsColor", "SetTextI18n")
     override fun onBindViewHolder(holder: mViewHolder, position: Int) {
         when (position) {
             0 -> {

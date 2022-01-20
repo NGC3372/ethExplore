@@ -3,8 +3,11 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
-        <entry key="..\:/AndroidStudioProjects/ethExplore/app/src/main/res/layout/activity_main.xml" value="0.32708333333333334" />
+        <entry key="..\:/AndroidStudioProjects/ethExplore/app/src/main/res/layout/activity_main.xml" value="0.25" />
+        <entry key="..\:/AndroidStudioProjects/ethExplore/app/src/main/res/layout/activity_qrcode.xml" value="0.1358695652173913" />
+        <entry key="..\:/AndroidStudioProjects/ethExplore/app/src/main/res/layout/dialog_search.xml" value="0.34375" />
         <entry key="..\:/AndroidStudioProjects/ethExplore/app/src/main/res/layout/fragment_block.xml" value="0.17603850050658562" />
+        <entry key="..\:/AndroidStudioProjects/ethExplore/app/src/main/res/layout/fragment_qrcode.xml" value="0.34375" />
         <entry key="..\:/AndroidStudioProjects/ethExplore/app/src/main/res/layout/fragment_transactions.xml" value="0.5362318840579711" />
         <entry key="..\:/AndroidStudioProjects/ethExplore/app/src/main/res/menu/activity_main_appbar_item.xml" value="0.271875" />
         <entry key="..\:/AndroidStudioProjects/ethExplore/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1" />

@@ -39,6 +39,18 @@ class blockFragment : Fragment() {
         val blockNumber = requireArguments().getString("blockNumber")
         binding.recyclerView.layoutManager = LinearLayoutManager(context)
         binding.recyclerView.adapter = BlockInfoAdapter(viewMode.getTransactionsList())
+        binding.QRCodeButton.setOnClickListener {
+            val address = binding.miner.text.toString()
+            if (address != ""){
+                println("not null")
+                val activity = activity as NewMainActivity
+                val fragment = QRCodeFragment()
+                val bundle = Bundle()
+                bundle.putString("value",address)
+                fragment.arguments = bundle
+                activity.addFragment(fragment)
+            }
+        }
         blockNumber?.let { viewMode.requestBlockData(blockNumber) }
         binding.miner.setTextColor(R.color.textLink)
         binding.miner.setOnClickListener {
