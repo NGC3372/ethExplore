@@ -14,6 +14,7 @@ import androidx.lifecycle.lifecycleScope
 import com.rainbowguo.ethexplore.Utils.myAnimation
 import com.rainbowguo.ethexplore.R
 import com.rainbowguo.ethexplore.NewMainActivity
+import com.rainbowguo.ethexplore.Utils.QRCodeHelper
 import com.rainbowguo.ethexplore.Utils.TextUtils
 
 import com.rainbowguo.ethexplore.beans.transactionsBean
@@ -44,6 +45,7 @@ class TransactionInfoFragment : Fragment() {
         data = arguments?.getSerializable("data") ?: 0
         binding.recyclerView.layoutManager = LinearLayoutManager(view.context)
         viewMode = ViewModelProvider(this)[transactionInfoMode::class.java]
+
         initData()
         observeData()
 
@@ -78,6 +80,10 @@ class TransactionInfoFragment : Fragment() {
                         fragment.arguments = bundle
                         activity.addFragment(fragment)
                     }
+                    binding.QRCodeButtonFrom.setOnClickListener {
+                        val addressFrom = binding.From.text.toString()
+                        QRCodeHelper.createQRCode(addressFrom).show(parentFragmentManager,null)
+                    }
                 }
             }
             launch {
@@ -91,6 +97,10 @@ class TransactionInfoFragment : Fragment() {
                         bundle.putString("address", binding.To.text.toString())
                         fragment.arguments = bundle
                         activity.addFragment(fragment)
+                    }
+                    binding.QRCodeButtonTo.setOnClickListener {
+                        val addressTo = binding.To.text.toString()
+                        QRCodeHelper.createQRCode(addressTo).show(parentFragmentManager,null)
                     }
                 }
             }

@@ -33,7 +33,7 @@ class blockFragmentMode : ViewModel() {
             val bean = HttpUtils.SearchService.get_ProxyBlockInfo(TextUtils.to16(number))
             Log.i(TAG, "requestBlockData: ok ${bean.result.transactions}")
             val timeStamp = TextUtils.to10(bean.result.timestamp)
-
+            blockNumber.value = TextUtils.to10(bean.result.number)
             date.value = TextUtils.timeStampFormat(timeStamp)
             miner.value = bean.result.miner
             transactionsList.addAll(bean.result.transactions)

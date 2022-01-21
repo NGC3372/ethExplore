@@ -19,6 +19,7 @@ import androidx.fragment.app.FragmentManager
 import com.rainbowguo.ethexplore.QRCodeActivity
 import com.rainbowguo.ethexplore.R
 import com.rainbowguo.ethexplore.Utils.TextUtils
+import com.rainbowguo.ethexplore.Utils.mToast
 import com.rainbowguo.ethexplore.beans.proxy_transactionsInfoBean
 
 class SearchFragment: DialogFragment() {
@@ -86,6 +87,7 @@ class SearchFragment: DialogFragment() {
                 fragmentManager.beginTransaction()
                     .add(R.id.fragmentBox, fragment).addToBackStack(null).commit()
             }
+            else -> mToast.showWrongContent()
         }
     }
 }

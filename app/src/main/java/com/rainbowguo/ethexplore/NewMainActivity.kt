@@ -25,7 +25,6 @@ class NewMainActivity : AppCompatActivity() {
         fragmentManager.beginTransaction().add(R.id.fragmentBox, HomeFragment()).commit()
         bind.searchButton.setOnClickListener {
             SearchFragment().show(fragmentManager, null)
-            //startActivity(Intent(this,QRCodeActivity::class.java))
         }
         mToast.create(this)
     }

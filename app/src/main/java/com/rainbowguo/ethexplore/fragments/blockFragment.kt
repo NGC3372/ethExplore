@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.rainbowguo.ethexplore.NewMainActivity
 import com.rainbowguo.ethexplore.R
+import com.rainbowguo.ethexplore.Utils.QRCodeHelper
 import com.rainbowguo.ethexplore.Utils.myAnimation
 import com.rainbowguo.ethexplore.adapter.BlockInfoAdapter
 import com.rainbowguo.ethexplore.databinding.FragmentBlockBinding
@@ -41,15 +42,7 @@ class blockFragment : Fragment() {
         binding.recyclerView.adapter = BlockInfoAdapter(viewMode.getTransactionsList())
         binding.QRCodeButton.setOnClickListener {
             val address = binding.miner.text.toString()
-            if (address != ""){
-                println("not null")
-                val activity = activity as NewMainActivity
-                val fragment = QRCodeFragment()
-                val bundle = Bundle()
-                bundle.putString("value",address)
-                fragment.arguments = bundle
-                activity.addFragment(fragment)
-            }
+            if (address != "") QRCodeHelper.createQRCode(address).show(parentFragmentManager,null)
         }
         blockNumber?.let { viewMode.requestBlockData(blockNumber) }
         binding.miner.setTextColor(R.color.textLink)

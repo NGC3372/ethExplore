@@ -20,14 +20,12 @@ class QRCodeFragment: DialogFragment() {
     }
 
     override fun onCreateDialog(savedInstanceState: Bundle?): Dialog {
+        println("on create dialog")
         val builder = AlertDialog.Builder(requireActivity())
         val view: View = requireActivity().layoutInflater.inflate(R.layout.fragment_qrcode, null)
         val imageView = view.findViewById<ImageView>(R.id.imageView)
         setQRCode(imageView)
-        builder.setView(view).setPositiveButton("ok"){_,_->
-
-        }
-        println("on create dialog")
+        builder.setView(view)
         return builder.create()
     }
 
@@ -37,8 +35,9 @@ class QRCodeFragment: DialogFragment() {
         if (content != null) {
             renderOption.content = content
         } // content to encode
+        println(renderOption.content)
         renderOption.size = 800 // size of the final QR code image
-        renderOption.borderWidth = 20 // width of the empty space around the QR code
+        //renderOption.borderWidth = 20 // width of the empty space around the QR code
         renderOption.ecl = ErrorCorrectionLevel.M // (optional) specify an error correction level
         renderOption.patternScale = 0.35f // (optional) specify a scale for patterns
         renderOption.roundedPatterns = true // (optional) if true, blocks will be drawn as dots instead
@@ -61,6 +60,7 @@ class QRCodeFragment: DialogFragment() {
                 }
                 else -> {
                     // Oops, something gone wrong.
+
                 }
             }
         } catch (e: Exception) {

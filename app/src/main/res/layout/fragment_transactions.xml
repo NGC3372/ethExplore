@@ -46,6 +46,12 @@
                                                     android:textStyle="bold"
                                                     android:layout_marginStart="5dp"
                                                     android:textColor="@color/textCommon"/>
+                                                <ImageView
+                                                    android:layout_width="20dp"
+                                                    android:layout_height="20dp"
+                                                    android:id="@+id/QRCodeButtonFrom"
+                                                    android:src="@drawable/erweima"
+                                                    android:layout_marginStart="10dp" />
                                         </LinearLayout>
                                         <TextView
                                             android:layout_width="wrap_content"
@@ -72,6 +78,12 @@
                                                     android:text="@string/to"
                                                     android:textStyle="bold"
                                                     android:textColor="@color/textCommon"/>
+                                                <ImageView
+                                                    android:layout_width="20dp"
+                                                    android:layout_height="20dp"
+                                                    android:id="@+id/QRCodeButtonTo"
+                                                    android:src="@drawable/erweima"
+                                                    android:layout_marginStart="10dp" />
                                         </LinearLayout>
 
                                         <TextView

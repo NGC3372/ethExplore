@@ -59,7 +59,7 @@ class addressFragmentMode(address: String) : ViewModel() {
             var abi = bean.result[0].abi
             var code = bean.result[0].sourceCode
             if (code.equals("")) code = "-"
-            if(abi .equals("Contract source code not verified")) abi = "-"
+            if(abi.equals("Contract source code not verified")) abi = "-"
             contractData["byteCode"] = byteCode
             contractData[abi] = abi
             contractData[code] = code

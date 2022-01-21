@@ -13,7 +13,9 @@ import androidx.lifecycle.lifecycleScope
 import androidx.lifecycle.viewModelScope
 import com.google.android.material.tabs.TabLayout
 import com.google.android.material.tabs.TabLayoutMediator
+import com.google.zxing.qrcode.encoder.QRCode
 import com.rainbowguo.ethexplore.R
+import com.rainbowguo.ethexplore.Utils.QRCodeHelper
 import com.rainbowguo.ethexplore.Utils.mToast
 import com.rainbowguo.ethexplore.Utils.TextUtils
 import com.rainbowguo.ethexplore.Utils.myAnimation
@@ -45,6 +47,12 @@ class AddressFragment : Fragment() {
         bind = FragmentAddressBinding.inflate(inflater)
         address = arguments?.getString("address").toString()
         bind.viewPager.offscreenPageLimit = 1
+        bind.QRCodeButton.setOnClickListener {
+            val address = bind.address.text.toString()
+            if (address != "")
+                QRCodeHelper.createQRCode(address).show(parentFragmentManager,null)
+
+        }
         viewMode = ViewModelProvider(this,object : ViewModelProvider.Factory {
             override fun <T : ViewModel> create(modelClass: Class<T>): T {
                 return addressFragmentMode(address) as T

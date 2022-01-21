@@ -21,6 +21,13 @@ public class mToast {
             toast.show();
         }
     }
+
+    public static void showWrongContent(){
+        if (toast != null){
+            toast.setText("Invalid data");
+            toast.show();
+        }
+    }
     public static void clear(){
         toast = null;
     }
